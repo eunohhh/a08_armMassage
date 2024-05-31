@@ -1,17 +1,6 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { getBlogs } from './redux/blogs.slice';
+import Test from './test';
 
 function App() {
-    const dispatch = useDispatch();
-    const blogs = useSelector((state) => state.blogs.blogs);
-
-    console.log(blogs);
-
-    useEffect(() => {
-        dispatch(getBlogs());
-    }, [dispatch]);
-
     // 잘되는 것 확인 크리에이트
     // useEffect(() => {
     //     setTimeout(() => {
@@ -48,7 +37,12 @@ function App() {
     //     }, 2000);
     // }, []);
 
-    return <main>야임마</main>;
+    return (
+        <main>
+            <h1>야임마</h1>
+            <Test />
+        </main>
+    );
 }
 
 export default App;
