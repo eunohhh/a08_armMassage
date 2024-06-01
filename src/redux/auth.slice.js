@@ -19,8 +19,16 @@ export const signInWithGithub = createAsyncThunk('auth/signInWithGithub', async 
 });
 
 // 회원가입
-export const signUp = createAsyncThunk('auth/signUp', async ({ email, password }, { rejectWithValue }) => {
-    const { user, error } = await supabase.auth.signUp({ email, password });
+export const signUp = createAsyncThunk('auth/signUp', async ({ email, password, displayName }, { rejectWithValue }) => {
+    const { user, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+            data: {
+                display_name: displayName
+            }
+        }
+    });
 
     if (error) {
         console.log('error => ', error);

@@ -11,11 +11,12 @@ const AuthTest = () => {
         const formData = new FormData(form);
         const email = formData.get('email')?.toString();
         const password = formData.get('password')?.toString();
+        const displayName = email.match(/^(([^<>()\[\].,;:\s@"]+(\.[^<>()\[\].,;:\s@"]+)*)|(".+"))/g);
 
         if (!email || !password) return;
 
         if (type === 'join') {
-            joinUp({ email, password });
+            joinUp({ email, password, displayName });
         } else if (type === 'logIn') {
             logIn({ email, password });
         }

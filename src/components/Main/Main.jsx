@@ -3,16 +3,17 @@ import styled from 'styled-components';
 import Card from '../List/Card';
 
 const Main = () => {
+    //^(([^<>()\[\].,;:\s@"]+(\.[^<>()\[\].,;:\s@"]+)*)|(".+"))
     const defaultData = [
         {
-            id: 1,
-            image: 'postImageURL.jpg',
-            title: '제목',
-            content: '글 임시텍스트 글글 요약글 임시텍스트 글글 요약글 임시텍스트 글글 요약글 글 요약',
-            date: '날짜',
-            profilePic: 'profilePicURL.jpg',
-            writer: '작성자ID',
-            likes: '123'
+            id: 1, // blog.id
+            image: 'postImageURL.jpg', // blog.image
+            title: '제목', // blog.title
+            content: '글 임시텍스트 글글 요약글 임시텍스트 글글 요약글 임시텍스트 글글 요약글 글 요약', // blog.contents
+            date: '날짜', // blog.created_at 을 substring
+            profilePic: 'profilePicURL.jpg', // user.profile_image
+            writer: '작성자ID', // user.email 을 정규식으로 뒤에 제거한 displayname
+            likes: '123' // blog.likes
         },
         {
             id: 2,
