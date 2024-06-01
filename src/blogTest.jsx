@@ -1,9 +1,12 @@
+import React from 'react';
+import { useModal } from './contexts/modal.context';
 import useAuth from './hooks/useAuth';
 import useBlogs from './hooks/useBlogs';
 
 function BlogTest() {
-    const { blogs, blogLoading, blogError, addBlogs, delBlogs } = useBlogs();
+    const { blogs, addBlogs, delBlogs } = useBlogs();
     const { user } = useAuth();
+    const modal = useModal();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -34,19 +37,29 @@ function BlogTest() {
 
     const handleDelete = (blogId) => () => delBlogs(blogId);
 
+    const handleUpdate = (blog) => () => {
+        const options = {
+            blog: blog,
+            user: user
+        };
+        modal.open(options);
+    };
+
+    // console.log('재랜더링');
+
     return (
         <>
-            {blogLoading && <p>Loading...</p>}
-            {blogError && <p>Error: {blogError}</p>}
+            {/* {blogLoading && <p>Loading...</p>}
+            {blogError && <p>Error: {blogError}</p>} */}
             <div>
                 {blogs &&
                     blogs.map((blog) => (
                         <div key={blog.id} style={{ border: '1px solid black' }}>
                             <p>{blog.title}</p>
-                            <p>{blog.contents}</p>
+                            <p style={{ whiteSpace: 'pre-wrap' }}>{blog.contents}</p>
                             <p>{blog.origin}</p>
                             <p>{blog.nick_name}</p>
-                            <button>수정</button>
+                            <button onClick={handleUpdate(blog)}>수정</button>
                             <button onClick={handleDelete(blog.id)}>삭제</button>
                         </div>
                     ))}
@@ -67,4 +80,4 @@ function BlogTest() {
     );
 }
 
-export default BlogTest;
+export default React.memo(BlogTest);

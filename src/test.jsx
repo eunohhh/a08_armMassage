@@ -1,3 +1,4 @@
+import React from 'react';
 import useAuth from './hooks/useAuth';
 
 const AuthTest = () => {
@@ -21,9 +22,9 @@ const AuthTest = () => {
     };
 
     // isLoggedIn이 세번바뀜
-    console.log('isLoggedIn => ' + isLoggedIn);
-    console.log(user);
-    console.log(session);
+    // console.log('isLoggedIn => ' + isLoggedIn);
+    // console.log(user);
+    // console.log(session);
 
     return (
         <div>
@@ -55,4 +56,4 @@ const AuthTest = () => {
     );
 };
 
-export default AuthTest;
+export default React.memo(AuthTest);

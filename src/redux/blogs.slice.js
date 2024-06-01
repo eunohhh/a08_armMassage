@@ -65,7 +65,36 @@ export const createBlogs = createAsyncThunk('blogs/createBlogs', async (newBlog,
 // update
 // updateBlog 는 객체 (id를 가지고있음)
 export const updateBlogs = createAsyncThunk('blogs/updateBlogs', async (updateBlog, { rejectWithValue }) => {
-    const { data, error } = await supabase.from('blogs').update([updateBlog]).eq('id', updateBlog.id).select().single();
+    let imgData, imgError;
+
+    // 파일이 있는 경우에만 파일 업로드를 수행
+    if (updateBlog.file !== null) {
+        const uploadResult = await supabase.storage
+            .from('blogs')
+            .upload(`${Date.now()}_${updateBlog.file.name}`, updateBlog.file);
+
+        imgData = uploadResult.data;
+        imgError = uploadResult.error;
+
+        if (imgError) {
+            console.log('error => ', imgError);
+            return rejectWithValue('이미지 쓰기 실패했다');
+        }
+
+        updateBlog.newBlog.image = imgData ? `${BASE_IMG_URL}${imgData.path}` : null;
+    }
+
+    // 파일이 없으면 이미지 경로를 null로 설정
+    if (!updateBlog.file) {
+        updateBlog.newBlog.image = null;
+    }
+
+    const { data, error } = await supabase
+        .from('blogs')
+        .update([updateBlog.newBlog])
+        .eq('id', updateBlog.newBlog.id)
+        .select()
+        .single();
 
     if (error) {
         console.log('error => ', error);
