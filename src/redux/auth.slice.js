@@ -83,6 +83,7 @@ const authSlice = createSlice({
             .addCase(signInWithGithub.fulfilled, (state, action) => {
                 state.loading = false;
                 state.user = action.payload;
+                state.isLoggedIn = true;
             })
             .addCase(signInWithGithub.rejected, (state, action) => {
                 state.loading = false;

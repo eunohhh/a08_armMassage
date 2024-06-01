@@ -16,7 +16,7 @@ const useBlogs = () => {
 
     useEffect(() => {
         dispatch(getBlogs());
-    }, [dispatch, blogs]);
+    }, [dispatch]);
 
     const addBlogs = (newBlog) => dispatch(createBlogs(newBlog));
     const upBlogs = (newBlog) => dispatch(updateBlogs(newBlog));

@@ -1,5 +1,5 @@
 import BlogTest from './blogTest';
-import Test from './test';
+import AuthTest from './test';
 
 function App() {
     // 잘되는 것 확인 크리에이트
@@ -30,7 +30,7 @@ function App() {
     return (
         <main>
             <h1>야임마</h1>
-            <Test />
+            <AuthTest />
             <BlogTest />
         </main>
     );

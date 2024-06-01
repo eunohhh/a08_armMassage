@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import supabase from '../supabase/supabaseClient';
 
+const BASE_IMG_URL = 'https://ageijospngqmyzptvsoo.supabase.co/storage/v1/object/public/';
+
 // createAsyncThunk : 리덕스가 비동기 통신할 때 쓰는 친구
 // read
 export const getBlogs = createAsyncThunk('blogs/getBlogs', async (_, { rejectWithValue }) => {
@@ -19,17 +21,45 @@ export const getBlogs = createAsyncThunk('blogs/getBlogs', async (_, { rejectWit
 
 // create
 export const createBlogs = createAsyncThunk('blogs/createBlogs', async (newBlog, { rejectWithValue }) => {
-    const { data, error } = await supabase.from('blogs').insert([newBlog]).select().single();
+    let imgData, imgError;
 
-    if (error) {
-        console.log('error => ', error);
+    // 파일이 있는 경우에만 파일 업로드를 수행
+    if (newBlog.file !== null) {
+        const uploadResult = await supabase.storage
+            .from('blogs')
+            .upload(`${Date.now()}_${newBlog.file.name}`, newBlog.file);
+
+        imgData = uploadResult.data;
+        imgError = uploadResult.error;
+
+        if (imgError) {
+            console.log('error => ', imgError);
+            return rejectWithValue('이미지 쓰기 실패했다');
+        }
+
+        newBlog.newBlog.image = imgData ? `${BASE_IMG_URL}${imgData.path}` : null;
+    }
+
+    // 파일이 없으면 이미지 경로를 null로 설정
+    if (!newBlog.file) {
+        newBlog.newBlog.image = null;
+    }
+
+    const { data: blogsData, error: blogsError } = await supabase
+        .from('blogs')
+        .insert([newBlog.newBlog])
+        .select()
+        .single();
+
+    if (blogsError) {
+        console.log('error => ', blogsError);
         return rejectWithValue('쓰기 실패했다');
     }
-    if (!data) {
+    if (!blogsData) {
         return rejectWithValue('데이터 없다');
     }
 
-    return data;
+    return blogsData;
 });
 
 // update

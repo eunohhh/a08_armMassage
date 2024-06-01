@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useEffect } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { signIn, signInWithGithub, signOut, signUp } from '../redux/auth.slice';
+import { checkSignIn, signIn, signInWithGithub, signOut, signUp } from '../redux/auth.slice';
 
 const useAuth = () => {
     const dispatch = useDispatch();
@@ -15,23 +15,21 @@ const useAuth = () => {
         shallowEqual
     );
 
-    // useEffect(() => {
-    //     dispatch(checkSignIn());
-    // }, [dispatch]);
+    useEffect(() => {
+        dispatch(checkSignIn());
+    }, [dispatch]);
 
     const logIn = (logInData) => dispatch(signIn(logInData));
     const logOut = () => dispatch(signOut());
     const joinUp = (logInData) => dispatch(signUp(logInData));
     const logInWithGithub = () => dispatch(signInWithGithub());
 
-    const memoizedIsLoggedIn = useMemo(() => isLoggedIn, [isLoggedIn]);
-
     return {
         user,
         session,
         loading,
         error,
-        isLoggedIn: memoizedIsLoggedIn,
+        isLoggedIn,
         logIn,
         logOut,
         joinUp,
@@ -40,3 +38,5 @@ const useAuth = () => {
 };
 
 export default useAuth;
+
+// const memoizedIsLoggedIn = useMemo(() => isLoggedIn, [isLoggedIn]);

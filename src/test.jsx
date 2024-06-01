@@ -1,9 +1,9 @@
 import useAuth from './hooks/useAuth';
 
-const Test = () => {
+const AuthTest = () => {
     const { user, session, loading, error, isLoggedIn, logIn, logOut, joinUp, logInWithGithub } = useAuth();
 
-    const handleSignUpSubmit = (e) => {
+    const handleSignUpSignInSubmit = (e, type) => {
         e.preventDefault();
 
         const form = e.target;
@@ -13,26 +13,17 @@ const Test = () => {
 
         if (!email || !password) return;
 
-        joinUp({ email, password });
-    };
-
-    const handleSignInSubmit = (e) => {
-        e.preventDefault();
-
-        const form = e.target;
-        const formData = new FormData(form);
-        const email = formData.get('email')?.toString();
-        const password = formData.get('password')?.toString();
-
-        if (!email || !password) return;
-
-        logIn({ email, password });
+        if (type === 'join') {
+            joinUp({ email, password });
+        } else if (type === 'logIn') {
+            logIn({ email, password });
+        }
     };
 
     // isLoggedIn이 세번바뀜
     console.log('isLoggedIn => ' + isLoggedIn);
-    console.log('session => ' + session);
-    console.log('user => ' + user);
+    console.log(user);
+    console.log(session);
 
     return (
         <div>
@@ -45,12 +36,12 @@ const Test = () => {
                 </div>
             ) : (
                 <>
-                    <form onSubmit={handleSignInSubmit}>
+                    <form onSubmit={(e) => handleSignUpSignInSubmit(e, 'logIn')}>
                         <input type="email" name="email" placeholder="Email" />
                         <input type="password" name="password" placeholder="Password" />
                         <button type="submit">로그인</button>
                     </form>
-                    <form onSubmit={handleSignUpSubmit}>
+                    <form onSubmit={(e) => handleSignUpSignInSubmit(e, 'join')}>
                         <input type="email" name="email" placeholder="Email" />
                         <input type="password" name="password" placeholder="Password" />
                         <button type="submit">회원가입</button>
@@ -64,4 +55,4 @@ const Test = () => {
     );
 };
 
-export default Test;
+export default AuthTest;

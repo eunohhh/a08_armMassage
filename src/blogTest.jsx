@@ -1,16 +1,33 @@
+import useAuth from './hooks/useAuth';
 import useBlogs from './hooks/useBlogs';
 
 function BlogTest() {
     const { blogs, blogLoading, blogError, addBlogs, delBlogs } = useBlogs();
+    const { user } = useAuth();
 
-    const handleAddCick = () => {
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (!user) return alert('글쓰고 싶으면 로그인해');
+
+        const form = e.target;
+        const formData = new FormData(form);
+        const file = formData.get('file');
+        const title = formData.get('title').toString();
+        const contents = formData.get('contents').toString();
+        const nick = formData.get('nick').toString();
+        const origin = formData.get('origin')?.toString();
+
         const temp = {
-            title: '너무 어려워',
-            contents: '진짜 너무해',
-            nick_name: '별명',
-            origin: '한국',
-            created_at: new Date().toISOString(),
-            user_id: 'eunoh'
+            newBlog: {
+                title: title,
+                contents: contents,
+                nick_name: nick,
+                origin: origin,
+                created_at: new Date().toISOString(),
+                user_id: user.email
+            },
+            file: file ? file.size > 0 : null
         };
         addBlogs(temp);
     };
@@ -34,7 +51,18 @@ function BlogTest() {
                         </div>
                     ))}
             </div>
-            <button onClick={handleAddCick}>추가하기</button>
+            <form onSubmit={handleSubmit}>
+                <input type="file" className="hidden" name="file" />
+                <label htmlFor="title">타이틀</label>
+                <input type="text" name="title"></input>
+                <label htmlFor="contents">내용</label>
+                <textarea type="text" name="contents"></textarea>
+                <label htmlFor="nick">별명</label>
+                <input type="text" name="nick"></input>
+                <label htmlFor="origin">출신</label>
+                <input type="text" name="origin"></input>
+                <button type="submit">추가하기</button>
+            </form>
         </>
     );
 }
