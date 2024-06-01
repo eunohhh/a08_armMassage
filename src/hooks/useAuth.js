@@ -1,30 +1,37 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { checkSignIn, signIn, signInWithGithub, signOut, signUp } from '../redux/auth.slice';
+import { useMemo } from 'react';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { signIn, signInWithGithub, signOut, signUp } from '../redux/auth.slice';
 
 const useAuth = () => {
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.auth.user);
-    const session = useSelector((state) => state.auth.session);
-    const loading = useSelector((state) => state.auth.loading);
-    const error = useSelector((state) => state.auth.error);
-    const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+    const { user, session, loading, error, isLoggedIn } = useSelector(
+        (state) => ({
+            user: state.auth.user,
+            session: state.auth.session,
+            loading: state.auth.loading,
+            error: state.auth.error,
+            isLoggedIn: state.auth.isLoggedIn
+        }),
+        shallowEqual
+    );
 
-    useEffect(() => {
-        dispatch(checkSignIn());
-    }, [dispatch]);
+    // useEffect(() => {
+    //     dispatch(checkSignIn());
+    // }, [dispatch]);
 
     const logIn = (logInData) => dispatch(signIn(logInData));
     const logOut = () => dispatch(signOut());
     const joinUp = (logInData) => dispatch(signUp(logInData));
     const logInWithGithub = () => dispatch(signInWithGithub());
 
+    const memoizedIsLoggedIn = useMemo(() => isLoggedIn, [isLoggedIn]);
+
     return {
         user,
         session,
         loading,
         error,
-        isLoggedIn,
+        isLoggedIn: memoizedIsLoggedIn,
         logIn,
         logOut,
         joinUp,

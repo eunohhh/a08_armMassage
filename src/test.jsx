@@ -29,9 +29,10 @@ const Test = () => {
         logIn({ email, password });
     };
 
-    console.log(isLoggedIn);
-    console.log(session);
-    console.log(user);
+    // isLoggedIn이 세번바뀜
+    console.log('isLoggedIn => ' + isLoggedIn);
+    console.log('session => ' + session);
+    console.log('user => ' + user);
 
     return (
         <div>

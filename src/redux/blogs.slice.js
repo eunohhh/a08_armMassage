@@ -129,6 +129,7 @@ const blogSlice = createSlice({
                 prevState.blogError = action.error.message;
             })
             .addCase(deleteBlogs.fulfilled, (prevState, action) => {
+                console.log(action.payload);
                 // 페이로드가 아이디
                 prevState.blogLoading = false;
                 prevState.blogs = prevState.blogs.filter((blog) => blog.id !== action.payload);

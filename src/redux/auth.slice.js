@@ -32,14 +32,14 @@ export const signUp = createAsyncThunk('auth/signUp', async ({ email, password }
 
 // 그냥 로그인
 export const signIn = createAsyncThunk('auth/signIn', async ({ email, password }, { rejectWithValue }) => {
-    const { session, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
         console.log('error => ', error);
         return rejectWithValue('auth 로그인 에러');
     }
 
-    return session;
+    return data;
 });
 
 // 로그아웃
@@ -78,6 +78,7 @@ const authSlice = createSlice({
             .addCase(signInWithGithub.pending, (state) => {
                 state.loading = true;
                 state.error = null;
+                state.isLoggedIn = true;
             })
             .addCase(signInWithGithub.fulfilled, (state, action) => {
                 state.loading = false;
@@ -107,8 +108,9 @@ const authSlice = createSlice({
             })
             .addCase(signIn.fulfilled, (state, action) => {
                 state.loading = false;
-                state.session = action.payload;
+                state.session = action.payload.session;
                 state.user = action.payload.user;
+                state.isLoggedIn = true;
             })
             .addCase(signIn.rejected, (state, action) => {
                 state.loading = false;
@@ -123,6 +125,7 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.session = null;
                 state.user = null;
+                state.isLoggedIn = false;
             })
             .addCase(signOut.rejected, (state, action) => {
                 state.loading = false;

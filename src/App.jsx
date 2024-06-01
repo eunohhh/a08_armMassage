@@ -1,18 +1,8 @@
+import BlogTest from './blogTest';
 import Test from './test';
 
 function App() {
     // 잘되는 것 확인 크리에이트
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         const temp = {
-    //             title: '너무 어려워',
-    //             contents: '진짜 너무해',
-    //             created_at: new Date().toISOString(),
-    //             author: '테스트맨'
-    //         };
-    //         dispatch(createBlogs(temp));
-    //     }, 500);
-    // }, []);
 
     // 잘되는 것 확인 업데이트
     // useEffect(() => {
@@ -41,6 +31,7 @@ function App() {
         <main>
             <h1>야임마</h1>
             <Test />
+            <BlogTest />
         </main>
     );
 }
