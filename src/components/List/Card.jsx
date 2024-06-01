@@ -1,19 +1,51 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
-const Card = ({ image, title, content, date, profilePic, writer, likes }) => {
+const Card = ({
+    id,
+    image,
+    title,
+    content,
+    date,
+    profilePic,
+    writer,
+    likes,
+}) => {
+    const onClickImage = () => {
+        console.log("개별 글 페이지로 이동");
+    };
+
+    const onClickTitle = () => {
+        console.log("개별 글 페이지로 이동");
+    };
+
+    const onClickText = () => {
+        console.log("개별 글 페이지로 이동");
+    };
+
+    const onClickProfile = () => {
+        console.log("개별 프로필로 이동");
+    };
+
     return (
         <StyledCardContainer>
-            <StyledImage>
-                <img src={image} alt="post" />
+            <StyledImage
+                onClick={onClickImage}
+                src={image}
+                alt="post 타이틀 이미지"
+            >
+                이미지
             </StyledImage>
             <StyledContent>
-                <StyledTitle>{title}</StyledTitle>
-                <StyledText>{content}</StyledText>
+                <StyledTitle onClick={onClickTitle}>{title}</StyledTitle>
+                <StyledText onClick={onClickText}>{content}</StyledText>
                 <StyledDate>{date}</StyledDate>
             </StyledContent>
             <StyledInfo>
-                <StyledProfile>
-                    <StyledProfilePic src={profilePic} alt="profile" />
+                <StyledProfile onClick={onClickProfile}>
+                    <StyledProfilePic
+                        src={profilePic}
+                        alt="Profile 이미지 사진"
+                    />
                     <StyledWriter>{writer}</StyledWriter>
                 </StyledProfile>
                 <StyledLikesContainer>
@@ -42,6 +74,7 @@ const StyledImage = styled.div`
         height: 100%;
         object-fit: cover;
     }
+    cursor: pointer;
 `;
 
 const StyledContent = styled.div`
@@ -58,6 +91,7 @@ const StyledTitle = styled.h2`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    cursor: pointer;
 `;
 
 const StyledText = styled.p`
@@ -66,6 +100,7 @@ const StyledText = styled.p`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    cursor: pointer;
 `;
 
 const StyledDate = styled.div`
@@ -88,6 +123,7 @@ const StyledInfo = styled.div`
 const StyledProfile = styled.div`
     display: flex;
     align-items: center;
+    cursor: pointer;
 `;
 
 const StyledProfilePic = styled.img`

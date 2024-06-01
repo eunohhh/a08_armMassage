@@ -1,13 +1,15 @@
-import BlogTest from './blogTest';
-import AuthTest from './test';
+// import BlogTest from './blogTest';
+// import AuthTest from './test';
+
+import Router from './routes/Router';
 
 function App() {
     return (
-        <main>
-            <h1>야임마</h1>
-            <AuthTest />
-            <BlogTest />
-        </main>
+        <>
+            <Router />
+            {/* <AuthTest />
+            <BlogTest /> */}
+        </>
     );
 }
 

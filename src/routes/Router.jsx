@@ -1,14 +1,19 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import DetailPage from '../pages/DetailPage';
+import HomePage from '../pages/HomePage';
+import JoinPage from '../pages/JoinPage';
+import PersonalPage from '../pages/PersonalPage';
+import WritePage from '../pages/WritePage';
 
 const Router = () => {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/"></Route>
-                <Route path="/join"></Route>
-                <Route path="/my"></Route>
-                <Route path="/write"></Route>
-                <Route path="/detail"></Route>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/join" element={<JoinPage />} />
+                <Route path="/my" element={<PersonalPage />} />
+                <Route path="/write" element={<WritePage />} />
+                <Route path="/detail" element={<DetailPage />}></Route>
             </Routes>
         </BrowserRouter>
     );
