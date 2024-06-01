@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const HighlightBox = ({ image, title, content, date, profilePic, writer, likes }) => {
+const Card = ({ image, title, content, date, profilePic, writer, likes }) => {
     return (
         <StyledCardContainer>
             <StyledImage>
@@ -110,4 +110,4 @@ const StyledLikes = styled.div`
     margin-left: 10px;
 `;
 
-export default HighlightBox;
+export default Card;
