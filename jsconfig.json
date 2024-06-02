@@ -1,9 +1,9 @@
 {
-    "paths": {
-        "@/*": ["*"],
-        "@components/*": ["components/*"],
-        "@pages/*": ["pages/*"],
-        "@data/*": ["components/data/*"],
-        "@shared/*": ["shared/*"]
-    }
+    "compilerOptions": {
+        "baseUrl": "./src",
+        "paths": {
+            "@/*": ["*"]
+        }
+    },
+    "include": ["src"]
 }
