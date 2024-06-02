@@ -21,7 +21,9 @@ const Router = () => {
                     <Route path="/join" element={<JoinPage />} />
                     <Route path="/my" element={<PersonalPage />} />
                     <Route path="/write" element={<WritePage />} />
-                    <Route path="/detail" element={<DetailPage />}></Route>
+                    <Route path="/detail">
+                        <Route path=":id" element={<DetailPage />} />
+                    </Route>
                 </Routes>
             </Layout>
         </BrowserRouter>
