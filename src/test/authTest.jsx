@@ -1,5 +1,5 @@
 import React from 'react';
-import useAuth from './hooks/useAuth';
+import useAuth from '../hooks/useAuth';
 
 const AuthTest = () => {
     const { user, session, loading, error, isLoggedIn, logIn, logOut, joinUp, logInWithGithub } = useAuth();

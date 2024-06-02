@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import Button from '../Button';
+import { useModal } from '../../contexts/modal.context';
+import Button from '../Elements/Button';
 
 const Header = ({ profilePic }) => {
     const [isLogin, setIsLogin] = useState(false);
+    const modal = useModal();
 
     const onclickLogo = () => {
         console.log('메인페이지 이동');
@@ -22,7 +24,8 @@ const Header = ({ profilePic }) => {
     };
 
     const onclickLogout = () => {
-        setIsLogin(!isLogin);
+        // setIsLogin(!isLogin);
+        modal.open();
     };
 
     return (

@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { createContext, useContext, useMemo, useState } from 'react';
-import Modal from '../components/Modal';
+import LogInModal from '../components/Auth/LogInModal';
+// import Modal from '../components/Modal';
 
 const initialValue = {
     open: () => {},
@@ -16,7 +17,10 @@ export const ModalProvider = ({ children }) => {
 
     const value = useMemo(
         () => ({
-            open: (options) => {
+            // 요기 options 는 모달이 열릴때
+            // 모달로 가는 데이터입니다
+            // 로그인 모달만 쓰니까 options 는 없애도 될듯 합니다 추후에
+            open: (options = 'asdf') => {
                 setModal(options);
             },
             close: () => {
@@ -29,7 +33,8 @@ export const ModalProvider = ({ children }) => {
     return (
         <ModalContext.Provider value={value}>
             {children}
-            {modal && <Modal options={modal} />}
+            {/* {modal && <Modal options={modal} />} */}
+            {modal && <LogInModal />}
         </ModalContext.Provider>
     );
 };

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import Button from '../Button';
+import Backdrop from '../Elements/Backdrop';
+import Button from '../Elements/Button';
 
 const LogInModal = () => {
     const [userId, setUserId] = useState('');
@@ -12,28 +13,30 @@ const LogInModal = () => {
     };
 
     return (
-        <StyledModalContainer>
-            <StyledForm onSubmit={onSubmit}>
-                <label>아이디</label>
-                <StyledInput
-                    type="text"
-                    placeholder="아이디를 입력하세요."
-                    value={userId}
-                    onChange={(e) => setUserId(e.target.value)}
-                />
-                <label>비밀번호</label>
-                <StyledInput
-                    type="password"
-                    placeholder="비밀번호를 입력하세요."
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <ButtonContainer>
-                    <Button type="submit" buttonText="회원가입" color="#a055ff"></Button>
-                    <Button type="submit" buttonText="로그인" color="#a055ff"></Button>
-                </ButtonContainer>
-            </StyledForm>
-        </StyledModalContainer>
+        <Backdrop>
+            <StyledModalContainer>
+                <StyledForm onSubmit={onSubmit}>
+                    <label>아이디</label>
+                    <StyledInput
+                        type="text"
+                        placeholder="아이디를 입력하세요."
+                        value={userId}
+                        onChange={(e) => setUserId(e.target.value)}
+                    />
+                    <label>비밀번호</label>
+                    <StyledInput
+                        type="password"
+                        placeholder="비밀번호를 입력하세요."
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <ButtonContainer>
+                        <Button type="submit" buttonText="회원가입" color="#a055ff"></Button>
+                        <Button type="submit" buttonText="로그인" color="#a055ff"></Button>
+                    </ButtonContainer>
+                </StyledForm>
+            </StyledModalContainer>
+        </Backdrop>
     );
 };
 

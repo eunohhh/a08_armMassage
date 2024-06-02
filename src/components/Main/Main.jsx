@@ -60,8 +60,8 @@ const Main = () => {
     const [posts, setPosts] = useState(defaultData);
 
     return (
-        <StyledMain>
-            <StyledMainInner>
+        <StyledSection>
+            <StyledUl>
                 {posts.map((post) => (
                     <Card
                         key={post.id}
@@ -75,23 +75,22 @@ const Main = () => {
                         likes={post.likes}
                     />
                 ))}
-            </StyledMainInner>
-        </StyledMain>
+            </StyledUl>
+        </StyledSection>
     );
 };
 
-const StyledMain = styled.main`
-    width: 80%;
+const StyledSection = styled.section`
     display: flex;
     justify-content: center;
     padding: 2rem;
     background-color: #9b9494;
+    margin: 0 auto;
 `;
 
-const StyledMainInner = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+const StyledUl = styled.ul`
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
 `;
 

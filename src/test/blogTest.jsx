@@ -1,7 +1,7 @@
 import React from 'react';
-import { useModal } from './contexts/modal.context';
-import useAuth from './hooks/useAuth';
-import useBlogs from './hooks/useBlogs';
+import { useModal } from '../contexts/modal.context';
+import useAuth from '../hooks/useAuth';
+import useBlogs from '../hooks/useBlogs';
 
 function BlogTest() {
     const { blogs, addBlogs, delBlogs } = useBlogs();

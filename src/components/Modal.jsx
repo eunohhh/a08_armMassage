@@ -2,7 +2,7 @@ import { useId } from 'react';
 import styled from 'styled-components';
 import { useModal } from '../contexts/modal.context';
 import useBlogs from '../hooks/useBlogs';
-import Backdrop from './Backdrop';
+import Backdrop from './Elements/Backdrop';
 
 const StyledDiv = styled.div`
     background-color: white;

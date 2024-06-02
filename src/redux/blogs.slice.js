@@ -108,7 +108,7 @@ export const updateBlogs = createAsyncThunk('blogs/updateBlogs', async (updateBl
 });
 
 // delete
-// id 는 number
+// id 는 uuid
 export const deleteBlogs = createAsyncThunk('blogs/deleteBlogs', async (id, { rejectWithValue }) => {
     const { data, error } = await supabase.from('blogs').delete().eq('id', id);
 
