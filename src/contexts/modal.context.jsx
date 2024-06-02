@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { createContext, useContext, useMemo, useState } from 'react';
+import { createContext, useContext, useMemo, useState, useEffect } from 'react';
 import LogInModal from '../components/Auth/LogInModal';
 // import Modal from '../components/Modal';
 
@@ -14,6 +14,14 @@ export const useModal = () => useContext(ModalContext);
 
 export const ModalProvider = ({ children }) => {
     const [modal, setModal] = useState(null);
+
+    useEffect(() => {
+        if (modal) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+    }, [modal]);
 
     const value = useMemo(
         () => ({
