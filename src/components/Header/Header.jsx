@@ -2,9 +2,11 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { useModal } from '../../contexts/modal.context';
 import Button from '../Elements/Button';
+import useAuth from '../../hooks/useAuth';
 
 const Header = ({ profilePic }) => {
-    const [isLogin, setIsLogin] = useState(false);
+    // const [isLogin, setIsLogin] = useState(false);
+    const { isLoggedIn, logOut } = useAuth();
     const modal = useModal();
 
     const onclickLogo = () => {
@@ -20,12 +22,13 @@ const Header = ({ profilePic }) => {
     };
 
     const onclickLogin = () => {
-        setIsLogin(!isLogin);
+        // setIsLogin(!isLogin);
+        modal.open();
     };
 
     const onclickLogout = () => {
         // setIsLogin(!isLogin);
-        modal.open();
+        logOut();
     };
 
     return (
@@ -35,15 +38,15 @@ const Header = ({ profilePic }) => {
                     Logo
                 </StyledLogo>
                 <StyledLoginArea>
-                    {isLogin ? (
+                    {isLoggedIn ? (
                         <StyledLogin>
                             <StyledProfilePic onClick={onclickProfile} src={profilePic} alt="Profile 이미지 사진" />
                             <Button onClick={onClickWrite} buttonText="글쓰기" color="#a055ff"></Button>
-                            <Button buttonText="로그아웃" onClick={onclickLogin} color="#a055ff"></Button>
+                            <Button buttonText="로그아웃" onClick={onclickLogout} color="#a055ff"></Button>
                         </StyledLogin>
                     ) : (
                         <StyledLogin>
-                            <Button buttonText="로그인" onClick={onclickLogout} color="#a055ff"></Button>
+                            <Button buttonText="로그인" onClick={onclickLogin} color="#a055ff"></Button>
                         </StyledLogin>
                     )}
                 </StyledLoginArea>
