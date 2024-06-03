@@ -5,6 +5,7 @@ import HomePage from '../pages/HomePage';
 import JoinPage from '../pages/JoinPage';
 import PersonalPage from '../pages/PersonalPage';
 import WritePage from '../pages/WritePage';
+import { ModalProvider } from '../contexts/modal.context';
 
 // / 메인 인수님
 // /join 지훈님
@@ -15,15 +16,17 @@ import WritePage from '../pages/WritePage';
 const Router = () => {
     return (
         <BrowserRouter>
-            <Layout>
-                <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/join" element={<JoinPage />} />
-                    <Route path="/my" element={<PersonalPage />} />
-                    <Route path="/write" element={<WritePage />} />
-                    <Route path="/detail" element={<DetailPage />}></Route>
-                </Routes>
-            </Layout>
+            <ModalProvider>
+                <Layout>
+                    <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/join" element={<JoinPage />} />
+                        <Route path="/my" element={<PersonalPage />} />
+                        <Route path="/write" element={<WritePage />} />
+                        <Route path="/detail" element={<DetailPage />}></Route>
+                    </Routes>
+                </Layout>
+            </ModalProvider>
         </BrowserRouter>
     );
 };

@@ -3,18 +3,24 @@ import styled from 'styled-components';
 import Backdrop from '../Elements/Backdrop';
 import Button from '../Elements/Button';
 import useAuth from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const LogInModal = () => {
     const [userId, setUserId] = useState('');
     const [password, setPassword] = useState('');
-    const { logInWithGithub } = useAuth();
+    const { logInWithGithub, logIn } = useAuth();
+    const navigate = useNavigate();
 
     const onSubmit = (e) => {
         e.preventDefault();
-        console.log(userId, password);
+        // console.log(userId, password);
+        logIn(userId, password);
     };
     const handleGithubClick = () => {
         logInWithGithub();
+    };
+    const handleJoinPage = () => {
+        navigate('/join');
     };
 
     return (
@@ -33,10 +39,11 @@ const LogInModal = () => {
                         type="password"
                         placeholder="비밀번호를 입력하세요."
                         value={password}
+                        autoComplete="off"
                         onChange={(e) => setPassword(e.target.value)}
                     />
                     <ButtonContainer>
-                        <Button type="button" buttonText="회원가입" color="#a055ff"></Button>
+                        <Button type="button" buttonText="회원가입" color="#a055ff" onClick={handleJoinPage}></Button>
                         <Button type="submit" buttonText="로그인" color="#a055ff"></Button>
                         <Button
                             type="button"
