@@ -1,10 +1,9 @@
-import { BASE_IMG_URL } from '@/redux/blogs.slice';
-import supabase from '@/supabase/supabaseClient';
+import getDataUrl from '@/utils/getDataUrl';
 import Quill from 'quill';
 import { forwardRef, useEffect, useLayoutEffect, useRef } from 'react';
 
 // 이미지 처리를 하는 핸들러
-const imageHandler = (quill) => {
+const imageHandler = (quill, setFile) => {
     console.log('에디터에서 이미지 버튼을 클릭하면 이 핸들러가 시작됩니다!');
 
     // 1. 이미지를 저장할 input type=file DOM을 만든다.
@@ -17,32 +16,18 @@ const imageHandler = (quill) => {
 
     // input에 변화가 생긴다면 = 이미지를 선택
     input.addEventListener('change', async () => {
-        console.log('온체인지');
         const file = input.files[0];
-        // multer에 맞는 형식으로 데이터 만들어준다.
+        setFile((prev) => [...prev, file]);
         const formData = new FormData();
         formData.append('img', file); // formData는 키-밸류 구조
-        // 백엔드 multer라우터에 이미지를 보낸다.
         try {
-            let imgData, imgError;
+            const base64 = await getDataUrl(file);
 
-            // 파일이 있는 경우에만 파일 업로드를 수행
-            if (file !== null) {
-                const uploadResult = await supabase.storage.from('blogs').upload(`${Date.now()}_${file.name}`, file);
-
-                imgData = uploadResult.data;
-                imgError = uploadResult.error;
-
-                if (imgError) {
-                    console.log('error => ', imgError);
-                }
-            }
-
-            // 이미지 태그를 에디터에 써주기 - 여러 방법이 있다.
-            // 2. 현재 에디터 커서 위치값을 가져온다
+            // 1. 현재 에디터 커서 위치값을 가져온다
             const range = quill.getSelection();
-            // 가져온 위치에 이미지를 삽입한다
-            quill.insertEmbed(range.index, 'image', `${BASE_IMG_URL}${imgData.path}`);
+            // 2. 가져온 위치에 이미지를 삽입한다
+            // quill.insertEmbed(range.index, 'image', `${BASE_IMG_URL}${imgData.path}`);
+            quill.insertEmbed(range.index, 'image', base64);
         } catch (error) {
             console.log('실패했어요ㅠ', error);
         }
@@ -50,7 +35,7 @@ const imageHandler = (quill) => {
 };
 
 // Editor is an uncontrolled React component
-const Editor = forwardRef(({ onTextChange }, ref) => {
+const Editor = forwardRef(({ onTextChange, setFile }, ref) => {
     const containerRef = useRef(null);
     const onTextChangeRef = useRef(onTextChange);
 
@@ -61,11 +46,12 @@ const Editor = forwardRef(({ onTextChange }, ref) => {
     useEffect(() => {
         const container = containerRef.current;
         container.style.width = '800px';
-        container.style.height = '600px';
+        container.style.height = '500px';
+        container.style.margin = '1rem 2rem';
         const editorContainer = container.appendChild(container.ownerDocument.createElement('div'));
         const quill = new Quill(editorContainer, {
             theme: 'snow',
-            placeholder: '당신의 하루를 들려주세요...,',
+            placeholder: '여기에 입력하세요...',
             modules: {
                 toolbar: {
                     container: [
@@ -75,13 +61,17 @@ const Editor = forwardRef(({ onTextChange }, ref) => {
                         ['code-block', 'link', 'image']
                     ],
                     handlers: {
-                        image: () => imageHandler(quill)
+                        image: () => {
+                            imageHandler(quill, setFile);
+                        }
                     }
                 }
             }
         });
 
         ref.current = quill;
+        container.children[0].style.height = '8%';
+        container.children[1].style.height = '92%';
 
         quill.on(Quill.events.TEXT_CHANGE, (delta, oldDelta, source) => {
             if (source === 'user') {
@@ -93,7 +83,7 @@ const Editor = forwardRef(({ onTextChange }, ref) => {
             ref.current = null;
             container.innerHTML = '';
         };
-    }, [ref]);
+    }, [ref, setFile]);
 
     return <div ref={containerRef}></div>;
 });
