@@ -1,5 +1,7 @@
+import WriteForm from '@/components/Write/WriteForm';
+
 function WritePage() {
-    return <div>WritePage</div>;
+    return <WriteForm />;
 }
 
 export default WritePage;
