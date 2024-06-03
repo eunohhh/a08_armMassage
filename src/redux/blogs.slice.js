@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import supabase from '../supabase/supabaseClient';
 
-const BASE_IMG_URL = 'https://ageijospngqmyzptvsoo.supabase.co/storage/v1/object/public/';
+export const BASE_IMG_URL = 'https://ageijospngqmyzptvsoo.supabase.co/storage/v1/object/public/blogs/';
 
 // createAsyncThunk : 리덕스가 비동기 통신할 때 쓰는 친구
 // read
@@ -20,6 +20,7 @@ export const getBlogs = createAsyncThunk('blogs/getBlogs', async (_, { rejectWit
 });
 
 // create
+// 여길 수정해야 할 가능성 있음!!
 export const createBlogs = createAsyncThunk('blogs/createBlogs', async (newBlog, { rejectWithValue }) => {
     let imgData, imgError;
 
@@ -60,6 +61,25 @@ export const createBlogs = createAsyncThunk('blogs/createBlogs', async (newBlog,
     }
 
     return blogsData;
+});
+
+// createImgs
+export const createImgs = createAsyncThunk('blogs/createImgs', async (file, { rejectWithValue }) => {
+    let imgData, imgError;
+
+    // 파일이 있는 경우에만 파일 업로드를 수행
+    if (file !== null) {
+        const uploadResult = await supabase.storage.from('blogs').upload(`${Date.now()}_${file.name}`, file);
+
+        imgData = uploadResult.data;
+        imgError = uploadResult.error;
+
+        if (imgError) {
+            console.log('error => ', imgError);
+            return rejectWithValue('이미지 쓰기 실패했다');
+        }
+    }
+    return imgData.path;
 });
 
 // update
@@ -158,7 +178,8 @@ export const updateLikes = createAsyncThunk('blogs/updateLikes', async (id, { re
 const initialState = {
     blogs: [],
     blogLoading: false,
-    blogError: null
+    blogError: null,
+    imageSrc: null
 };
 
 const blogSlice = createSlice({
@@ -244,6 +265,18 @@ const blogSlice = createSlice({
                         return blog;
                     }
                 });
+            })
+            // createImg
+            .addCase(createImgs.pending, (prevState) => {
+                prevState.blogLoading = true;
+            })
+            .addCase(createImgs.rejected, (prevState, action) => {
+                prevState.blogLoading = false;
+                prevState.blogError = action.error.message;
+            })
+            .addCase(createImgs.fulfilled, (prevState, action) => {
+                prevState.blogLoading = false;
+                prevState.imageSrc = action.payload;
             });
     }
 });

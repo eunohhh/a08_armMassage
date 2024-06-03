@@ -1,3 +1,5 @@
+import DOMPurify from 'dompurify';
+import parse, { domToReact } from 'html-react-parser';
 import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
@@ -23,20 +25,40 @@ function Detail() {
         return diffDays;
     }, [blog.created_at]);
 
+    const cleanHTML = DOMPurify.sanitize(blog.contents);
+
+    const replaceImgTag = (node) => {
+        if (node.name === 'img') {
+            const { src } = node.attribs;
+            const item = {
+                image: src,
+                title: 'blog_image'
+            };
+            return <CustomImage item={item} />;
+        }
+        if (node.name === 'p') {
+            return <StyledP>{node.children[0].data}</StyledP>;
+        }
+        return domToReact(node.children, { replace: replaceImgTag });
+    };
+
     return (
         <StyledSection>
             <StyledH2>{blog.title}</StyledH2>
+
             <StyledH3>
                 {blog.user_id.match(regex)} · {diffDays}일 전 &nbsp;&nbsp;
                 <LikeButton id={blog.id} /> &nbsp;
                 <Likes id={blog.id} />
             </StyledH3>
-            {blog.image && <CustomImage item={blog} />}
-            <StyledP style={{ whiteSpace: 'pre-wrap' }}>
-                {/* <StyledSpan>소개 :</StyledSpan> <br />
-                <br /> */}
+
+            {parse(cleanHTML, { replace: replaceImgTag })}
+
+            {/* {blog.image && <CustomImage item={blog} />} */}
+            {/* <StyledP>
                 {blog.contents}
-            </StyledP>
+            </StyledP> */}
+
             {blog.origin && (
                 <StyledP>
                     <StyledSpan>출신 :</StyledSpan> {blog.origin}
@@ -80,6 +102,7 @@ const StyledP = styled.p`
     position: relative;
     box-sizing: border-box;
     padding: 1rem 0;
+    white-space: pre-wrap;
 `;
 
 const StyledSpan = styled.span`
