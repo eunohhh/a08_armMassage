@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useModal } from '../../contexts/modal.context';
-import Button from '../Elements/Button';
 import useAuth from '../../hooks/useAuth';
+import Button from '../Elements/Button';
 
 const Header = ({ profilePic }) => {
-    // const [isLogin, setIsLogin] = useState(false);
     const { isLoggedIn, logOut } = useAuth();
+    const navigate = useNavigate();
     const modal = useModal();
 
     const onclickLogo = () => {
@@ -18,6 +18,7 @@ const Header = ({ profilePic }) => {
     };
 
     const onClickWrite = () => {
+        navigate('/write');
         console.log('글쓰기 페이지 이동');
     };
 

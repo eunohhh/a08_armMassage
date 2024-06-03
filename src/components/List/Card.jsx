@@ -1,16 +1,12 @@
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-const Card = ({ id, image, title, content, date, profilePic, writer, likes }) => {
-    const onClickImage = () => {
-        console.log('개별 글 페이지로 이동');
-    };
+const Card = ({ blog, content }) => {
+    const navigate = useNavigate();
 
-    const onClickTitle = () => {
+    const handleCardClick = () => {
         console.log('개별 글 페이지로 이동');
-    };
-
-    const onClickText = () => {
-        console.log('개별 글 페이지로 이동');
+        navigate(`/detail/${blog.id}`, { state: { blog } });
     };
 
     const onClickProfile = () => {
@@ -22,21 +18,21 @@ const Card = ({ id, image, title, content, date, profilePic, writer, likes }) =>
     return (
         <li>
             <StyledCardContainer>
-                <StyledImage onClick={onClickImage} src={image} alt="post 타이틀 이미지" />
+                <StyledImage onClick={handleCardClick} src={blog.image} alt="post 타이틀 이미지" />
                 <StyledContent>
                     <StyledTexts>
-                        <StyledTitle onClick={onClickTitle}>{title}</StyledTitle>
-                        <StyledText onClick={onClickText}>{content}</StyledText>
+                        <StyledTitle onClick={handleCardClick}>{blog.title}</StyledTitle>
+                        <StyledText onClick={handleCardClick}>{content}</StyledText>
                     </StyledTexts>
-                    <StyledDate>{dateFormat(date)}</StyledDate>
+                    <StyledDate>{dateFormat(blog.created_at)}</StyledDate>
                 </StyledContent>
                 <StyledInfo>
                     <StyledProfile onClick={onClickProfile}>
-                        <StyledProfilePic src={profilePic} alt="Profile 이미지 사진" />
-                        <StyledWriter>{writer}</StyledWriter>
+                        <StyledProfilePic src={blog.profilePic} alt="Profile 이미지 사진" />
+                        <StyledWriter>{blog.nick_name}</StyledWriter>
                     </StyledProfile>
                     <StyledLikesContainer>
-                        <StyledLikes>❤️ {likes}</StyledLikes>
+                        <StyledLikes>❤️ {blog.likes}</StyledLikes>
                     </StyledLikesContainer>
                 </StyledInfo>
             </StyledCardContainer>
