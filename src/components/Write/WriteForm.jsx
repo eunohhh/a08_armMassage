@@ -16,7 +16,7 @@ function WriteForm() {
     const { user } = useAuth();
     const { addBlogs } = useBlogs();
     const [contents, setContents] = useState(null);
-    const [files, setFiles] = useState(null);
+    const [files, setFiles] = useState([]);
 
     const quillRef = useRef();
 

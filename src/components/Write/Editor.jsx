@@ -35,7 +35,7 @@ const imageHandler = (quill, setFiles) => {
 };
 
 // Editor is an uncontrolled React component
-const Editor = forwardRef(({ onTextChange, setFile }, ref) => {
+const Editor = forwardRef(({ onTextChange, setFiles }, ref) => {
     const containerRef = useRef(null);
     const onTextChangeRef = useRef(onTextChange);
 
@@ -62,7 +62,7 @@ const Editor = forwardRef(({ onTextChange, setFile }, ref) => {
                     ],
                     handlers: {
                         image: () => {
-                            imageHandler(quill, setFile);
+                            imageHandler(quill, setFiles);
                         }
                     }
                 }
@@ -83,7 +83,7 @@ const Editor = forwardRef(({ onTextChange, setFile }, ref) => {
             ref.current = null;
             container.innerHTML = '';
         };
-    }, [ref, setFile]);
+    }, [ref, setFiles]);
 
     return <div ref={containerRef}></div>;
 });

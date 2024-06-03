@@ -1,20 +1,28 @@
+import { useModal } from '@/contexts/modal.context';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import useAuth from '../../hooks/useAuth';
 import Backdrop from '../Elements/Backdrop';
 import Button from '../Elements/Button';
-import useAuth from '../../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
 
 const LogInModal = () => {
     const [userId, setUserId] = useState('');
     const [password, setPassword] = useState('');
     const { logInWithGithub, logIn } = useAuth();
+    const modal = useModal();
     const navigate = useNavigate();
 
     const onSubmit = (e) => {
         e.preventDefault();
         // console.log(userId, password);
-        logIn(userId, password);
+        const authObject = {
+            email: userId,
+            password: password
+        };
+
+        logIn(authObject);
+        modal.close();
     };
     const handleGithubClick = () => {
         logInWithGithub();

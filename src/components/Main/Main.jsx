@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import Card from '../List/Card';
 import useBlogs from '../../hooks/useBlogs';
+import Card from '../List/Card';
 
 const Main = () => {
     const { blogs } = useBlogs();
@@ -9,18 +9,8 @@ const Main = () => {
     return (
         <StyledSection>
             <StyledUl>
-                {blogs.map((post) => (
-                    <Card
-                        key={post.id}
-                        id={post.id}
-                        image={post.image}
-                        title={post.title}
-                        content={post.contents.match(/<p>(.*?)<\/p>/)?.[1]}
-                        date={post.created_at}
-                        profilePic={post.profilePic}
-                        writer={post.nick_name}
-                        likes={post.likes}
-                    />
+                {blogs.map((blog) => (
+                    <Card key={blog.id} blog={blog} content={blog.contents.match(/<p>(.*?)<\/p>/)?.[1]} />
                 ))}
             </StyledUl>
         </StyledSection>
