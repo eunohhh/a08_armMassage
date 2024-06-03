@@ -22,7 +22,11 @@ const useBlogs = () => {
     const addBlogs = (newBlog) => dispatch(createBlogs(newBlog));
     const upBlogs = (newBlog) => dispatch(updateBlogs(newBlog));
     const delBlogs = (blogId) => dispatch(deleteBlogs(blogId));
-    const addLikes = (blogId) => dispatch(updateLikes(blogId));
+    const addLikes = (ids) => {
+        dispatch(updateLikes(ids)).then(() => {
+            dispatch(getBlogs());
+        });
+    };
     const addImgs = (imgFile) => dispatch(createImgs(imgFile));
 
     return {
