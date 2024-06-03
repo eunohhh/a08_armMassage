@@ -1,3 +1,4 @@
+import { ModalProvider } from '@/contexts/modal.context';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Layout from '../components/Layout';
 import DetailPage from '../pages/DetailPage';
@@ -15,21 +16,23 @@ import ProtectedRoute from './ProtectedRoute';
 const Router = () => {
     return (
         <BrowserRouter>
-            <Layout>
-                <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/join" element={<JoinPage />} />
-                    <Route exact path="/" element={<ProtectedRoute />}>
-                        <Route path="/my" element={<PersonalPage />} />
-                    </Route>
-                    <Route exact path="/" element={<ProtectedRoute />}>
-                        <Route path="/write" element={<WritePage />} />
-                    </Route>
-                    <Route path="/detail">
-                        <Route path=":id" element={<DetailPage />} />
-                    </Route>
-                </Routes>
-            </Layout>
+            <ModalProvider>
+                <Layout>
+                    <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/join" element={<JoinPage />} />
+                        <Route exact path="/" element={<ProtectedRoute />}>
+                            <Route path="/my" element={<PersonalPage />} />
+                        </Route>
+                        <Route exact path="/" element={<ProtectedRoute />}>
+                            <Route path="/write" element={<WritePage />} />
+                        </Route>
+                        <Route path="/detail">
+                            <Route path=":id" element={<DetailPage />} />
+                        </Route>
+                    </Routes>
+                </Layout>
+            </ModalProvider>
         </BrowserRouter>
     );
 };
