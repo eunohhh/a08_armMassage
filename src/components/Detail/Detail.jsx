@@ -58,17 +58,6 @@ function Detail() {
             {/* <StyledP>
                 {blog.contents}
             </StyledP> */}
-
-            {blog.origin && (
-                <StyledP>
-                    <StyledSpan>출신 :</StyledSpan> {blog.origin}
-                </StyledP>
-            )}
-            {blog.nick_name && (
-                <StyledP>
-                    <StyledSpan>별칭 :</StyledSpan> {blog.nick_name}
-                </StyledP>
-            )}
         </StyledSection>
     );
 }
@@ -105,7 +94,7 @@ const StyledP = styled.p`
     white-space: pre-wrap;
 `;
 
-const StyledSpan = styled.span`
-    position: relative;
-    font-weight: 600;
-`;
+// const StyledSpan = styled.span`
+//     position: relative;
+//     font-weight: 600;
+// `;
