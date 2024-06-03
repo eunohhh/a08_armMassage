@@ -7,6 +7,7 @@ import JoinPage from '../pages/JoinPage';
 import PersonalPage from '../pages/PersonalPage';
 import WritePage from '../pages/WritePage';
 import ProtectedRoute from './ProtectedRoute';
+
 // / 메인 인수님
 // /join 지훈님
 // /my 도희님
@@ -30,6 +31,7 @@ const Router = () => {
                         <Route path="/detail">
                             <Route path=":id" element={<DetailPage />} />
                         </Route>
+
                     </Routes>
                 </Layout>
             </ModalProvider>
