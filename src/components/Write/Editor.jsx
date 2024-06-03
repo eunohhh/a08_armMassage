@@ -3,7 +3,7 @@ import Quill from 'quill';
 import { forwardRef, useEffect, useLayoutEffect, useRef } from 'react';
 
 // 이미지 처리를 하는 핸들러
-const imageHandler = (quill, setFile) => {
+const imageHandler = (quill, setFiles) => {
     console.log('에디터에서 이미지 버튼을 클릭하면 이 핸들러가 시작됩니다!');
 
     // 1. 이미지를 저장할 input type=file DOM을 만든다.
@@ -17,7 +17,7 @@ const imageHandler = (quill, setFile) => {
     // input에 변화가 생긴다면 = 이미지를 선택
     input.addEventListener('change', async () => {
         const file = input.files[0];
-        setFile((prev) => [...prev, file]);
+        setFiles((prev) => [...prev, file]);
         const formData = new FormData();
         formData.append('img', file); // formData는 키-밸류 구조
         try {

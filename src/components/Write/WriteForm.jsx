@@ -1,11 +1,12 @@
-import Editor from '@/components/Elements/Editor';
 import useAuth from '@/hooks/useAuth';
 import useBlogs from '@/hooks/useBlogs';
+import uploadFilesAndReplaceImageSrc from '@/utils/uploadFilesAndReplaceImageSrc';
 import { useRef, useState } from 'react';
 import 'react-quill/dist/quill.snow.css';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from '../Elements/Button';
+import Editor from './Editor';
 // import supabase from '@/supabase/supabaseClient';
 
 function WriteForm() {
@@ -15,7 +16,7 @@ function WriteForm() {
     const { user } = useAuth();
     const { addBlogs } = useBlogs();
     const [contents, setContents] = useState(null);
-    const [file, setFile] = useState(null);
+    const [files, setFiles] = useState(null);
 
     const quillRef = useRef();
 
@@ -31,31 +32,18 @@ function WriteForm() {
 
         if (!title || !contents) return alert('내용부터 입력 해야지 에휴...');
 
-        // let imgData, imgError;
-
-        //     // 파일이 있는 경우에만 파일 업로드를 수행
-        //     if (file !== null) {
-
-        //         const uploadResult = await supabase.storage.from('blogs').upload(`${Date.now()}_${file.name}`, file);
-
-        //         imgData = uploadResult.data;
-        //         imgError = uploadResult.error;
-
-        //         if (imgError) {
-        //             console.log('error => ', imgError);
-        //         }
-        //     }
+        const updatedContents = await uploadFilesAndReplaceImageSrc(files, contents);
 
         const temp = {
             newBlog: {
                 title: title,
-                contents: contents,
+                contents: updatedContents,
                 nick_name: '테스트',
                 origin: '테스트',
                 created_at: new Date().toISOString(),
                 user_id: user.email
             },
-            file: file.size > 0 ? file : null
+            file: files[0].size > 0 ? files[0] : null
         };
 
         addBlogs(temp);
@@ -69,7 +57,7 @@ function WriteForm() {
                 name="title"
                 placeholder={blog ? blog.contents : '타이틀을 입력하세요'}
             ></StyledInput>
-            <Editor ref={quillRef} onTextChange={setContents} setFile={setFile} />
+            <Editor ref={quillRef} onTextChange={setContents} setFiles={setFiles} />
             <StyledDiv>
                 <Button buttonText={'출간하기'} color={'#a055ff'} type={'submit'} />
             </StyledDiv>
@@ -101,3 +89,18 @@ const StyledDiv = styled.div`
     justify-content: flex-end;
     align-items: center;
 `;
+
+// let imgData, imgError;
+
+//     // 파일이 있는 경우에만 파일 업로드를 수행
+//     if (file !== null) {
+
+//         const uploadResult = await supabase.storage.from('blogs').upload(`${Date.now()}_${file.name}`, file);
+
+//         imgData = uploadResult.data;
+//         imgError = uploadResult.error;
+
+//         if (imgError) {
+//             console.log('error => ', imgError);
+//         }
+//     }
