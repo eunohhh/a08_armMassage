@@ -17,16 +17,18 @@ const Card = ({ id, image, title, content, date, profilePic, writer, likes }) =>
         console.log('개별 프로필로 이동');
     };
 
+    const dateFormat = (date) => date.slice(0, 10);
+
     return (
         <li>
             <StyledCardContainer>
-                <StyledImage onClick={onClickImage} src={image} alt="post 타이틀 이미지">
-                    이미지
-                </StyledImage>
+                <StyledImage onClick={onClickImage} src={image} alt="post 타이틀 이미지" />
                 <StyledContent>
-                    <StyledTitle onClick={onClickTitle}>{title}</StyledTitle>
-                    <StyledText onClick={onClickText}>{content}</StyledText>
-                    <StyledDate>{date}</StyledDate>
+                    <StyledTexts>
+                        <StyledTitle onClick={onClickTitle}>{title}</StyledTitle>
+                        <StyledText onClick={onClickText}>{content}</StyledText>
+                    </StyledTexts>
+                    <StyledDate>{dateFormat(date)}</StyledDate>
                 </StyledContent>
                 <StyledInfo>
                     <StyledProfile onClick={onClickProfile}>
@@ -53,27 +55,37 @@ const StyledCardContainer = styled.div`
 `;
 
 const StyledImage = styled.div`
-    flex: 4;
-    background-color: #f0f0f0;
-    img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+    flex: 8;
+    background-image: url(${(props) => props.src});
+    background-repeat: no-repeat;
+    background-size: cover;
     cursor: pointer;
+
+    ${(props) =>
+        !props.src &&
+        `
+        flex: 0;
+        display: none;
+    `}
 `;
 
 const StyledContent = styled.div`
-    flex: 4;
+    flex: ${(props) => (props.src ? 4 : 7)};
     background-color: #e8e8e8;
     padding: 10px;
     font-size: 14px;
     overflow: hidden;
+    position: relative;
+`;
+const StyledTexts = styled.div`
+    flex: 1;
 `;
 
-const StyledTitle = styled.h2`
-    margin: 0 0 20px 0;
+const StyledTitle = styled.h3`
+    /* margin: 0 0 20px 0; */
+    padding-bottom: 10px;
     font-size: 18px;
+    font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -81,12 +93,17 @@ const StyledTitle = styled.h2`
 `;
 
 const StyledText = styled.p`
-    margin: 10px 0 80px 0;
+    margin: 10px 0 10px 0;
+    /* padding: 20px 0 10px 0; */
     font-size: 14px;
-    white-space: nowrap;
+    width: 280px;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
     cursor: pointer;
+    line-height: 1.6;
 `;
 
 const StyledDate = styled.div`
@@ -95,6 +112,9 @@ const StyledDate = styled.div`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
 `;
 
 const StyledInfo = styled.div`
@@ -121,6 +141,9 @@ const StyledProfilePic = styled.img`
 
 const StyledWriter = styled.div`
     font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 `;
 
 const StyledLikesContainer = styled.div`

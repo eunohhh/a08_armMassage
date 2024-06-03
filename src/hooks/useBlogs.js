@@ -1,15 +1,16 @@
 import { useEffect } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { createBlogs, deleteBlogs, getBlogs, updateBlogs } from '../redux/blogs.slice';
+import { createBlogs, createImgs, deleteBlogs, getBlogs, updateBlogs, updateLikes } from '../redux/blogs.slice';
 
 const useBlogs = () => {
     const dispatch = useDispatch();
 
-    const { blogs, blogLoading, blogError } = useSelector(
+    const { blogs, blogLoading, blogError, imageSrc } = useSelector(
         (state) => ({
             blogs: state.blogs.blogs,
             blogLoading: state.blogs.blogLoading,
-            blogError: state.blogs.blogError
+            blogError: state.blogs.blogError,
+            imageSrc: state.blogs.imageSrc
         }),
         shallowEqual
     );
@@ -21,14 +22,19 @@ const useBlogs = () => {
     const addBlogs = (newBlog) => dispatch(createBlogs(newBlog));
     const upBlogs = (newBlog) => dispatch(updateBlogs(newBlog));
     const delBlogs = (blogId) => dispatch(deleteBlogs(blogId));
+    const addLikes = (blogId) => dispatch(updateLikes(blogId));
+    const addImgs = (imgFile) => dispatch(createImgs(imgFile));
 
     return {
         blogs,
         blogLoading,
         blogError,
+        imageSrc,
         addBlogs,
         upBlogs,
-        delBlogs
+        delBlogs,
+        addLikes,
+        addImgs
     };
 };
 
