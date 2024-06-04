@@ -40,6 +40,7 @@ const LogInModal = () => {
     };
     const handleJoinPage = () => {
         navigate('/join');
+        modal.close();
     };
 
     return (
