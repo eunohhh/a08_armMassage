@@ -1,3 +1,4 @@
+import { authSliceName } from '@/redux/auth.slice';
 import getDataUrl from '@/utils/getDataUrl';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -5,6 +6,7 @@ import styled from 'styled-components';
 
 function MyPage() {
     const [profileImage, setProfileImage] = useState('images/blank-profile-picture.png');
+    const [profileName, setProfileName] = useState('');
     const navigate = useNavigate();
 
     const handleImageChange = async (e) => {
@@ -19,45 +21,55 @@ function MyPage() {
         }
     };
 
+    const handleNameChange = (e) => {
+        setProfileName(e.target.value);
+    };
+
+    const handleSubmitName = (e) => {
+        e.preventDefault();
+        // console.log(profileName);
+        setProfileName('');
+    };
+
     const handleBackClick = () => {
-        navigate(-1);
+        navigate('/');
     };
 
     return (
-        <>
-            <Section>
-                <Div>
-                    <ImageBox>
-                        <img
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            src="images/blank-profile-picture.png"
-                            alt="profile image"
-                        />
-                    </ImageBox>
-                    <StyledButton color="#a055ff" onClick={() => document.getElementById('fileInput').click()}>
-                        이미지 변경하기
-                    </StyledButton>
-                    <input
-                        id="fileInput"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        style={{ display: 'none' }}
+        <Section>
+            <LeftDiv>
+                <ImageBox>
+                    <img
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        src={profileImage}
+                        alt="profile image"
                     />
-                </Div>
-                <Div>
-                    이름 변경하기
-                    <br />
-                    <Input placeholder="새로운 이름을 입력하세요" />
-                </Div>
+                </ImageBox>
+                <StyledButton color="#a055ff" onClick={() => document.getElementById('fileInput').click()}>
+                    이미지 변경하기
+                </StyledButton>
+                <input
+                    id="fileInput"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    style={{ display: 'none' }}
+                />
+            </LeftDiv>
+            <RightDiv>
+                <Label>이름 변경하기</Label>
+                <br />
+                <Input value={profileName} placeholder={authSliceName} onChange={handleNameChange} />
                 <Buttons>
-                    <StyledButton color="#a055ff">저장</StyledButton>
+                    <StyledButton color="#a055ff" onClick={handleSubmitName}>
+                        저장
+                    </StyledButton>
                     <StyledButton color="#a055ff" onClick={handleBackClick}>
                         돌아가기
                     </StyledButton>
                 </Buttons>
-            </Section>
-        </>
+            </RightDiv>
+        </Section>
     );
 }
 
@@ -65,31 +77,44 @@ const Section = styled.section`
     max-width: 900px;
     display: flex;
     align-items: center;
-    flex-direction: column;
+    flex-direction: row;
     margin: 0 auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px 50px 20px 50px;
 `;
 
-const Div = styled.div`
-    margin-bottom: 30px;
+const LeftDiv = styled.div`
+    margin-bottom: 15px;
     display: flex;
     flex-direction: column;
+`;
+
+const RightDiv = styled.div`
+    margin-left: 60px;
 `;
 
 const ImageBox = styled.div`
-    width: 140px;
-    height: 140px;
+    width: 180px;
+    height: 180px;
     border-radius: 70%;
     display: flex;
-    align-items: center;
     justify-content: center;
     background-color: #f0f0f0;
     overflow: hidden;
     margin: 50px 0px 20px 0px;
 `;
 
+const Label = styled.label`
+    font-size: 19px;
+`;
+
 const Input = styled.input`
-    margin-top: 10px;
+    margin: 20px 0px 25px 0px;
     font-size: 15px;
+    height: 25px;
+    font-size: 25px;
+    padding: 5px;
 `;
 
 const Buttons = styled.div`
