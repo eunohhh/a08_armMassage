@@ -1,5 +1,11 @@
+import Join from '../components/Join/Join';
+
 function JoinPage() {
-    return <div>JoinPage</div>;
+    return (
+        <>
+            <Join />
+        </>
+    );
 }
 
 export default JoinPage;
