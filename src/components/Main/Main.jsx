@@ -6,15 +6,13 @@ import Card from '../List/Card';
 const Main = () => {
     const { blogs } = useBlogs();
 
+    console.log(blogs);
+
+    //blog.contents.match(/<p>(.*?)<\/p>/)?.[1]
     return (
         <StyledSection $blogs={blogs}>
             {blogs.length > 0 ? (
-                <StyledUl>
-                    {blogs &&
-                        blogs.map((blog) => (
-                            <Card key={blog.id} blog={blog} content={blog.contents.match(/<p>(.*?)<\/p>/)?.[1]} />
-                        ))}
-                </StyledUl>
+                <StyledUl>{blogs && blogs.map((blog) => <Card key={blog.id} blog={blog} />)}</StyledUl>
             ) : (
                 <Loader />
             )}

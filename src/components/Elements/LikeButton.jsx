@@ -11,12 +11,16 @@ function LikeButton({ id }) {
     const handleLikeClick = async () => {
         setIsButtonDisabled(true);
         try {
-            const ids = {
-                blogId: id,
-                userId: user.id
-            };
+            if (user) {
+                const ids = {
+                    blogId: id,
+                    userId: user.id
+                };
 
-            addLikes(ids);
+                addLikes(ids);
+            } else {
+                alert('로그인이 필요합니다');
+            }
         } catch (error) {
             console.error('Failed to update likes: ', error);
         }

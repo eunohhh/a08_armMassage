@@ -7,6 +7,7 @@ function Loader() {
 export default Loader;
 
 const StyledSpan = styled.span`
+    position: relative;
     width: 48px;
     height: 48px;
     border: 5px solid black;
@@ -15,6 +16,9 @@ const StyledSpan = styled.span`
     display: inline-block;
     box-sizing: border-box;
     animation: rotation 1s linear infinite;
+    /* top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); */
 
     @keyframes rotation {
         0% {

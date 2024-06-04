@@ -1,8 +1,11 @@
+import useAuth from '@/hooks/useAuth';
+import useBlogs from '@/hooks/useBlogs';
 import DOMPurify from 'dompurify';
 import parse, { domToReact } from 'html-react-parser';
 import { useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import Button from '../Elements/Button';
 import CustomImage from '../Elements/CustomImage';
 import LikeButton from '../Elements/LikeButton';
 import Likes from '../Elements/Likes';
@@ -10,23 +13,35 @@ import Likes from '../Elements/Likes';
 const regex = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))/g;
 // 이미지는 12:9 비율
 function Detail() {
-    const location = useLocation();
-    const { blog } = location.state;
+    const { user } = useAuth();
+    const { blogs } = useBlogs();
+    const navigate = useNavigate();
+
+    const params = useParams();
+
+    const blog = useMemo(() => blogs.find((blog) => blog.id === params.id), [blogs, params.id]);
 
     const diffDays = useMemo(() => {
-        // 주어진 날짜를 Date 객체로 변환
-        const givenDate = new Date(blog.created_at);
-        // 오늘 날짜를 가져오기
-        const today = new Date();
-        // 두 날짜 사이의 차이(밀리초 단위)
-        const diffTime = Math.abs(today - givenDate);
-        // 차이를 일 단위로 변환
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays;
-    }, [blog.created_at]);
+        if (blog) {
+            // 주어진 날짜를 Date 객체로 변환
+            const givenDate = new Date(blog.created_at);
+            // 오늘 날짜를 가져오기
+            const today = new Date();
+            // 두 날짜 사이의 차이(밀리초 단위)
+            const diffTime = Math.abs(today - givenDate);
+            // 차이를 일 단위로 변환
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+        }
+    }, [blog]);
 
-    const cleanHTML = DOMPurify.sanitize(blog.contents);
+    const cleanHTML = useMemo(() => {
+        if (blog) {
+            return DOMPurify.sanitize(blog.contents);
+        }
+    }, [blog]);
 
+    // 그냥 html 을 react dom 으로
     const replaceImgTag = (node) => {
         if (node.name === 'img') {
             const { src } = node.attribs;
@@ -37,10 +52,14 @@ function Detail() {
             return <CustomImage item={item} />;
         }
         if (node.name === 'p') {
-            return <StyledP>{node.children[0].data}</StyledP>;
+            return <StyledP>{domToReact(node.children || [], { replace: replaceImgTag })}</StyledP>;
         }
-        return domToReact(node.children, { replace: replaceImgTag });
+        return domToReact(node.children || [], { replace: replaceImgTag });
     };
+
+    if (!blog) {
+        return <div>Blog not found</div>; // 해당 블로그를 찾을 수 없을 때
+    }
 
     return (
         <StyledSection>
@@ -54,10 +73,16 @@ function Detail() {
 
             {parse(cleanHTML, { replace: replaceImgTag })}
 
-            {/* {blog.image && <CustomImage item={blog} />} */}
-            {/* <StyledP>
-                {blog.contents}
-            </StyledP> */}
+            {user && (
+                <StyledDiv>
+                    <Button
+                        buttonText={'수정하기'}
+                        color={'#a055ff'}
+                        type={'button'}
+                        onClick={() => navigate('/write', { state: { blog } })}
+                    />
+                </StyledDiv>
+            )}
         </StyledSection>
     );
 }
@@ -89,9 +114,19 @@ const StyledH3 = styled.h3`
 
 const StyledP = styled.p`
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
     box-sizing: border-box;
     padding: 1rem 0;
     white-space: pre-wrap;
+`;
+
+const StyledDiv = styled.div`
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
 `;
 
 // const StyledSpan = styled.span`

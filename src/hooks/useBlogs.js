@@ -19,14 +19,11 @@ const useBlogs = () => {
         dispatch(getBlogs());
     }, [dispatch]);
 
-    const addBlogs = (newBlog) => dispatch(createBlogs(newBlog));
-    const upBlogs = (newBlog) => dispatch(updateBlogs(newBlog));
-    const delBlogs = (blogId) => dispatch(deleteBlogs(blogId));
-    const addLikes = (ids) => {
-        dispatch(updateLikes(ids)).then(() => {
-            dispatch(getBlogs());
-        });
-    };
+    const addBlogs = (newBlog) => dispatch(createBlogs(newBlog)).then(() => dispatch(getBlogs()));
+    const upBlogs = (newBlog) => dispatch(updateBlogs(newBlog)).then(() => dispatch(getBlogs()));
+    const delBlogs = (blogId) => dispatch(deleteBlogs(blogId)).then(() => dispatch(getBlogs()));
+    const addLikes = (ids) => dispatch(updateLikes(ids)).then(() => dispatch(getBlogs()));
+
     const addImgs = (imgFile) => dispatch(createImgs(imgFile));
 
     return {

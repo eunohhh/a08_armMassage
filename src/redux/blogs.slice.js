@@ -21,7 +21,7 @@ export const getBlogs = createAsyncThunk('blogs/getBlogs', async (_, { rejectWit
 
     if (likesError) {
         console.error('Error fetching blog posts with likes:', likesError);
-        return [];
+        return rejectWithValue('가져오기 실패했다');
     }
 
     // 좋아요 데이터를 해시 맵으로 변환
@@ -109,21 +109,27 @@ export const createImgs = createAsyncThunk('blogs/createImgs', async (file, { re
 export const updateBlogs = createAsyncThunk('blogs/updateBlogs', async (updateBlog, { rejectWithValue }) => {
     let imgData, imgError;
 
-    // 파일이 있는 경우에만 파일 업로드를 수행
+    console.log(updateBlog);
+
+    // 파일이 있고 타입이 스트링이 아닌 경우(타입이 스트링인 경우는 src 값이 넘어왔을 때임)에만 파일 업로드를 수행
     if (updateBlog.file !== null) {
-        const uploadResult = await supabase.storage
-            .from('blogs')
-            .upload(`${Date.now()}_${updateBlog.file.name}`, updateBlog.file);
+        if (typeof updateBlog.file !== 'string') {
+            const uploadResult = await supabase.storage
+                .from('blogs')
+                .upload(`${Date.now()}_${updateBlog.file.name}`, updateBlog.file);
 
-        imgData = uploadResult.data;
-        imgError = uploadResult.error;
+            imgData = uploadResult.data;
+            imgError = uploadResult.error;
 
-        if (imgError) {
-            console.log('error => ', imgError);
-            return rejectWithValue('이미지 쓰기 실패했다');
+            if (imgError) {
+                console.log('error => ', imgError);
+                return rejectWithValue('이미지 쓰기 실패했다');
+            }
+
+            updateBlog.newBlog.image = imgData ? `${BASE_IMG_URL}${imgData.path}` : null;
+        } else {
+            updateBlog.newBlog.image = updateBlog.file;
         }
-
-        updateBlog.newBlog.image = imgData ? `${BASE_IMG_URL}${imgData.path}` : null;
     }
 
     // 파일이 없으면 이미지 경로를 null로 설정
@@ -266,8 +272,7 @@ const initialState = {
     blogs: [],
     blogLoading: false,
     blogError: null,
-    imageSrc: null,
-    likes: 0
+    imageSrc: null
 };
 
 const blogSlice = createSlice({

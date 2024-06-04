@@ -1,7 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+const regex = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))/g;
 
-const Card = ({ blog, content }) => {
+const removeImgTags = (htmlString) => {
+    return htmlString.replace(/<img[^>]*>/gi, '');
+};
+
+const Card = ({ blog }) => {
     const navigate = useNavigate();
 
     const handleCardClick = () => {
@@ -22,14 +27,17 @@ const Card = ({ blog, content }) => {
                 <StyledContent>
                     <StyledTexts>
                         <StyledTitle onClick={handleCardClick}>{blog.title}</StyledTitle>
-                        <StyledText onClick={handleCardClick}>{content}</StyledText>
+                        <StyledText
+                            onClick={handleCardClick}
+                            dangerouslySetInnerHTML={{ __html: removeImgTags(blog.contents) }}
+                        ></StyledText>
                     </StyledTexts>
                     <StyledDate>{dateFormat(blog.created_at)}</StyledDate>
                 </StyledContent>
                 <StyledInfo>
                     <StyledProfile onClick={onClickProfile}>
                         <StyledProfilePic src={blog.profilePic} alt="Profile 이미지 사진" />
-                        <StyledWriter>{blog.nick_name}</StyledWriter>
+                        <StyledWriter>{blog.user_id.match(regex)}</StyledWriter>
                     </StyledProfile>
                     <StyledLikesContainer>
                         <StyledLikes>❤️ {blog.likes}</StyledLikes>
@@ -52,6 +60,7 @@ const StyledCardContainer = styled.div`
     overflow: hidden;
     width: 100%;
     height: 400px;
+    max-width: 280px;
 `;
 
 const StyledImage = styled.div`

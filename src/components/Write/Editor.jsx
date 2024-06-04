@@ -3,7 +3,7 @@ import Quill from 'quill';
 import { forwardRef, useEffect, useLayoutEffect, useRef } from 'react';
 
 // 이미지 처리를 하는 핸들러
-const imageHandler = (quill, setFiles) => {
+const imageHandler = (quill, setFiles, onTextChangeRef) => {
     console.log('에디터에서 이미지 버튼을 클릭하면 이 핸들러가 시작됩니다!');
 
     // 1. 이미지를 저장할 input type=file DOM을 만든다.
@@ -26,8 +26,15 @@ const imageHandler = (quill, setFiles) => {
             // 1. 현재 에디터 커서 위치값을 가져온다
             const range = quill.getSelection();
             // 2. 가져온 위치에 이미지를 삽입한다
-            // quill.insertEmbed(range.index, 'image', `${BASE_IMG_URL}${imgData.path}`);
             quill.insertEmbed(range.index, 'image', base64);
+
+            // 3. 커서를 이미지 다음으로 이동시키기
+            quill.setSelection(range.index + 1);
+
+            // 4. 강제로 TEXT_CHANGE 이벤트 트리거
+            quill.insertText(range.index + 1, '\n');
+            // quill.root.innerHTML을 사용하여 onTextChangeRef 호출
+            onTextChangeRef.current?.(quill.root.innerHTML);
         } catch (error) {
             console.log('실패했어요ㅠ', error);
         }
@@ -51,7 +58,7 @@ const Editor = forwardRef(({ onTextChange, setFiles, blog }, ref) => {
         const editorContainer = container.appendChild(container.ownerDocument.createElement('div'));
         const quill = new Quill(editorContainer, {
             theme: 'snow',
-            placeholder: blog ? blog.contents : '여기에 입력하세요...',
+            placeholder: blog ? '' : '여기에 입력하세요...',
             modules: {
                 toolbar: {
                     container: [
@@ -62,7 +69,7 @@ const Editor = forwardRef(({ onTextChange, setFiles, blog }, ref) => {
                     ],
                     handlers: {
                         image: () => {
-                            imageHandler(quill, setFiles);
+                            imageHandler(quill, setFiles, onTextChangeRef);
                         }
                     }
                 }
@@ -73,17 +80,33 @@ const Editor = forwardRef(({ onTextChange, setFiles, blog }, ref) => {
         container.children[0].style.height = '8%';
         container.children[1].style.height = '92%';
 
-        quill.on(Quill.events.TEXT_CHANGE, (delta, oldDelta, source) => {
-            if (source === 'user') {
-                onTextChangeRef.current?.(quill.root.innerHTML);
+        // Set initial content if blog is provided
+        if (blog && blog.contents) {
+            quill.clipboard.dangerouslyPasteHTML(blog.contents);
+
+            // 커서 마지막 위치로, 근데 왜 setTimeout 하는 것인지...
+            setTimeout(() => {
+                const length = quill.getLength();
+                quill.setSelection(length - 1, length - 1);
+            }, 0);
+        }
+
+        //oldDelta, source
+        quill.on(Quill.events.TEXT_CHANGE, (delta) => {
+            // Check if an image was added
+            const hasImage = delta.ops.some((op) => op.insert && op.insert.image);
+            if (hasImage) {
+                const length = quill.getLength();
+                quill.insertText(length, '\n'); // Add a new line after the image
             }
+            onTextChangeRef.current?.(quill.root.innerHTML);
         });
 
         return () => {
             ref.current = null;
             container.innerHTML = '';
         };
-    }, [ref, setFiles]);
+    }, [ref, setFiles, blog]);
 
     return <div ref={containerRef}></div>;
 });
