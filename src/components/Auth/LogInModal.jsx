@@ -1,10 +1,11 @@
 import { useModal } from '@/contexts/modal.context';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import useAuth from '../../hooks/useAuth';
 import Backdrop from '../Elements/Backdrop';
 import Button from '../Elements/Button';
+import InputField from '../Elements/InputField';
 
 const LogInModal = () => {
     const [userId, setUserId] = useState('');
@@ -12,10 +13,21 @@ const LogInModal = () => {
     const { logInWithGithub, logIn } = useAuth();
     const modal = useModal();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const onSubmit = (e) => {
         e.preventDefault();
-        // console.log(userId, password);
+
+        const idType = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!idType.test(userId)) {
+            alert('이메일 형식으로 아이디를 입력해주세요.');
+            return;
+        }
+        if (password.length < 4) {
+            alert('비밀번호는 4글자 이상으로 입력해주세요.');
+            return;
+        }
+
         const authObject = {
             email: userId,
             password: password
@@ -25,25 +37,28 @@ const LogInModal = () => {
         modal.close();
     };
     const handleGithubClick = () => {
-        logInWithGithub();
+        modal.close();
+        logInWithGithub(location.pathname);
     };
     const handleJoinPage = () => {
         navigate('/join');
+        modal.close();
     };
 
     return (
         <Backdrop>
             <StyledModalContainer>
                 <StyledForm onSubmit={onSubmit}>
-                    <label>아이디</label>
-                    <StyledInput
+                    <InputField
+                        label="아이디"
                         type="text"
-                        placeholder="아이디를 입력하세요."
+                        placeholder="이메일을 입력하세요."
                         value={userId}
                         onChange={(e) => setUserId(e.target.value)}
                     />
-                    <label>비밀번호</label>
-                    <StyledInput
+
+                    <InputField
+                        label="비밀번호"
                         type="password"
                         placeholder="비밀번호를 입력하세요."
                         value={password}
@@ -79,13 +94,6 @@ const StyledForm = styled.form`
     flex-direction: column;
 `;
 
-const StyledInput = styled.input`
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-`;
 const ButtonContainer = styled.div`
     display: flex;
     justify-content: center;
