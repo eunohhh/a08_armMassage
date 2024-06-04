@@ -15,6 +15,8 @@ const useAuth = () => {
         shallowEqual
     );
 
+    // console.log(user);
+
     useEffect(() => {
         dispatch(checkSignIn());
     }, [dispatch]);

@@ -18,6 +18,7 @@ export const signInWithGithub = createAsyncThunk('auth/signInWithGithub', async 
         return rejectWithValue('로그인 실패?');
     }
     // data === user
+
     return data;
 });
 
@@ -55,6 +56,19 @@ export const signIn = createAsyncThunk('auth/signIn', async ({ email, password }
             return rejectWithValue('로그인 에러');
         }
     }
+
+    const { data: profile, error: profileError } = await supabase
+        .from('userinfo')
+        .select('profile_image')
+        .eq('id', data.user.id)
+        .single();
+
+    data.user.profile = profile.profile_image;
+
+    if (profileError) {
+        console.log(profileError);
+    }
+
     return data;
 });
 
@@ -73,7 +87,8 @@ export const checkSignIn = createAsyncThunk('auth/checkSignIn', async () => {
     const session = await supabase.auth.getUser();
     const isSignIn = !!session.data.user;
 
-    return { isSignIn, session: session.data.user };
+    // return { isSignIn, session: session.data.user };
+    return isSignIn;
 });
 
 const initialState = {
@@ -154,17 +169,17 @@ const authSlice = createSlice({
             .addCase(checkSignIn.pending, (state) => {
                 state.loading = true;
                 state.error = null;
+                state.isLoggedIn = false;
             })
             .addCase(checkSignIn.fulfilled, (state, action) => {
                 state.loading = false;
-                if (!action.payload.session) return;
-                state.session = action.payload.session;
-                state.user = action.payload.session;
-                state.isLoggedIn = action.payload.isSignIn;
+                state.error = null;
+                state.isLoggedIn = action.payload;
             })
             .addCase(checkSignIn.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
+                state.isLoggedIn = false;
             });
     }
 });

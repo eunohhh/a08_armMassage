@@ -109,8 +109,6 @@ export const createImgs = createAsyncThunk('blogs/createImgs', async (file, { re
 export const updateBlogs = createAsyncThunk('blogs/updateBlogs', async (updateBlog, { rejectWithValue }) => {
     let imgData, imgError;
 
-    console.log(updateBlog);
-
     // 파일이 있고 타입이 스트링이 아닌 경우(타입이 스트링인 경우는 src 값이 넘어왔을 때임)에만 파일 업로드를 수행
     if (updateBlog.file !== null) {
         if (typeof updateBlog.file !== 'string') {
