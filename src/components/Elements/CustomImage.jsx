@@ -13,12 +13,10 @@ function CustomImage({ item }) {
         img.onerror = () => setSrc(null);
     }, [item.image]);
 
+    // return <Loader />;
+
     if (!src) {
-        return (
-            <StyledDiv>
-                <Loader />
-            </StyledDiv>
-        );
+        return <Loader />;
     } else {
         return <StyledImg width={720} src={src} alt={item.title}></StyledImg>;
     }
@@ -29,14 +27,4 @@ export default CustomImage;
 const StyledImg = styled.img`
     position: relative;
     margin: 1rem auto;
-`;
-
-const StyledDiv = styled.div`
-    position: relative;
-    width: 720px;
-    height: 540px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto;
 `;

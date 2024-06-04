@@ -2,9 +2,12 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import supabase from '../supabase/supabaseClient';
 
 // 깃헙 로그인
-export const signInWithGithub = createAsyncThunk('auth/signInWithGithub', async (_, { rejectWithValue }) => {
+export const signInWithGithub = createAsyncThunk('auth/signInWithGithub', async (prevLocation, { rejectWithValue }) => {
     const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'github'
+        provider: 'github',
+        options: {
+            redirectTo: `${window.location.origin}${prevLocation}` // 원하는 경로로 수정
+        }
     });
 
     if (error) {
@@ -14,7 +17,7 @@ export const signInWithGithub = createAsyncThunk('auth/signInWithGithub', async 
     if (!data) {
         return rejectWithValue('로그인 실패?');
     }
-    // 확인 필요
+    // data === user
     return data;
 });
 
@@ -86,16 +89,18 @@ const authSlice = createSlice({
             .addCase(signInWithGithub.pending, (state) => {
                 state.loading = true;
                 state.error = null;
-                state.isLoggedIn = true;
+                state.isLoggedIn = false;
             })
             .addCase(signInWithGithub.fulfilled, (state, action) => {
                 state.loading = false;
                 state.user = action.payload;
                 state.isLoggedIn = true;
+                state.error = null;
             })
             .addCase(signInWithGithub.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
+                state.isLoggedIn = false;
             })
             // 회원가입
             .addCase(signUp.pending, (state) => {

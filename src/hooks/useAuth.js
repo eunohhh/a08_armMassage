@@ -22,7 +22,7 @@ const useAuth = () => {
     const logIn = (logInData) => dispatch(signIn(logInData));
     const logOut = () => dispatch(signOut());
     const joinUp = (logInData) => dispatch(signUp(logInData));
-    const logInWithGithub = () => dispatch(signInWithGithub());
+    const logInWithGithub = (prevLocation) => dispatch(signInWithGithub(prevLocation));
 
     return {
         user,

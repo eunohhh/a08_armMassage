@@ -62,6 +62,8 @@ const StyledHeader = styled.header`
     background-color: #3f3f3f;
     color: #fff;
     padding: 1rem;
+    box-sizing: border-box;
+    height: 72px;
 `;
 
 const StyledHeaderInner = styled.div`

@@ -1,7 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+// const regex = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))/g;
 
-const Card = ({ blog, content }) => {
+const removeImgTags = (htmlString) => {
+    return htmlString.replace(/<img[^>]*>/gi, '');
+};
+
+const Card = ({ blog }) => {
     const navigate = useNavigate();
 
     const handleCardClick = () => {
@@ -22,13 +27,16 @@ const Card = ({ blog, content }) => {
     };
 
     return (
-        <li>
+        <StyledLi>
             <StyledCardContainer>
                 <StyledImage onClick={handleCardClick} src={blog.image} alt="post 타이틀 이미지" />
                 <StyledContent>
                     <StyledTexts>
                         <StyledTitle onClick={handleCardClick}>{blog.title}</StyledTitle>
-                        <StyledText onClick={handleCardClick}>{content}</StyledText>
+                        <StyledText
+                            onClick={handleCardClick}
+                            dangerouslySetInnerHTML={{ __html: removeImgTags(blog.contents) }}
+                        ></StyledText>
                     </StyledTexts>
                     <StyledDate>{dateFormat(blog.created_at)}</StyledDate>
                 </StyledContent>
@@ -42,9 +50,13 @@ const Card = ({ blog, content }) => {
                     </StyledLikesContainer>
                 </StyledInfo>
             </StyledCardContainer>
-        </li>
+        </StyledLi>
     );
 };
+
+const StyledLi = styled.li`
+    width: 100%;
+`;
 
 const StyledCardContainer = styled.div`
     display: flex;
@@ -52,8 +64,9 @@ const StyledCardContainer = styled.div`
     border: 1px solid #ccc;
     border-radius: 8px;
     overflow: hidden;
-    width: 300px;
+    width: 100%;
     height: 400px;
+    max-width: 280px;
 `;
 
 const StyledImage = styled.div`
@@ -78,6 +91,7 @@ const StyledContent = styled.div`
     font-size: 14px;
     overflow: hidden;
     position: relative;
+    display: flex;
 `;
 const StyledTexts = styled.div`
     flex: 1;
@@ -96,7 +110,7 @@ const StyledTitle = styled.h3`
 const StyledText = styled.p`
     margin: 10px 0 10px 0;
     font-size: 14px;
-    width: 280px;
+    width: 100%;
     display: -webkit-box;
     -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;

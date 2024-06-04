@@ -3,7 +3,7 @@ import useBlogs from '@/hooks/useBlogs';
 import uploadFilesAndReplaceImageSrc from '@/utils/uploadFilesAndReplaceImageSrc';
 import { useRef, useState } from 'react';
 import 'react-quill/dist/quill.snow.css';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from '../Elements/Button';
 import Editor from './Editor';
@@ -11,42 +11,65 @@ import Editor from './Editor';
 
 function WriteForm() {
     const location = useLocation();
+    const navigate = useNavigate();
     const blog = location.state !== null ? location.state.blog : null;
 
     const { user } = useAuth();
-    const { addBlogs } = useBlogs();
-    const [contents, setContents] = useState(null);
+    const { addBlogs, upBlogs } = useBlogs();
+    const [contents, setContents] = useState(blog ? blog.contents : null);
     const [files, setFiles] = useState([]);
+    const [title, setTitle] = useState(blog ? blog.title : '');
 
     const quillRef = useRef();
+
+    const handleChange = (e) => {
+        setTitle(e.target.value);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!user) return alert('글 쓰고 싶으면 좋은 말 할 때 로그인 해');
 
-        const form = e.target;
-        const formData = new FormData(form);
-
-        const title = formData.get('title')?.toString();
-
         if (!title || !contents) return alert('내용부터 입력 해야지 에휴...');
 
         const updatedContents = await uploadFilesAndReplaceImageSrc(files, contents);
 
-        const temp = {
-            newBlog: {
-                title: title,
-                contents: updatedContents,
-                nick_name: '테스트',
-                origin: '테스트',
-                created_at: new Date().toISOString(),
-                user_id: user.email
-            },
-            file: files[0].size > 0 ? files[0] : null
-        };
+        // blog 가 트루면 즉 업데이트면
+        if (blog) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = updatedContents;
+            const imgTags = tempDiv.getElementsByTagName('img');
 
-        addBlogs(temp);
+            const imgSrcToUpdate = imgTags && imgTags.length > 0 ? imgTags[0].src : null;
+
+            console.log(files);
+            const temp = {
+                newBlog: {
+                    id: blog.id,
+                    title: title,
+                    contents: updatedContents,
+                    created_at: new Date().toISOString(),
+                    user_id: user.email
+                },
+                file: files.length > 0 && files[0].size > 0 ? files[0] : imgSrcToUpdate
+            };
+
+            upBlogs(temp);
+        } else {
+            const temp = {
+                newBlog: {
+                    title: title,
+                    contents: updatedContents,
+                    created_at: new Date().toISOString(),
+                    user_id: user.email
+                },
+                file: files[0].size > 0 ? files[0] : null
+            };
+
+            addBlogs(temp);
+        }
+        navigate('/');
     };
 
     return (
@@ -55,9 +78,11 @@ function WriteForm() {
             <StyledInput
                 type="text"
                 name="title"
-                placeholder={blog ? blog.contents : '타이틀을 입력하세요'}
+                placeholder={blog ? '' : '타이틀을 입력하세요'}
+                value={title}
+                onChange={handleChange}
             ></StyledInput>
-            <Editor ref={quillRef} onTextChange={setContents} setFiles={setFiles} />
+            <Editor ref={quillRef} onTextChange={setContents} setFiles={setFiles} blog={blog} />
             <StyledDiv>
                 <Button buttonText={'출간하기'} color={'#a055ff'} type={'submit'} />
             </StyledDiv>
@@ -104,3 +129,8 @@ const StyledDiv = styled.div`
 //             console.log('error => ', imgError);
 //         }
 //     }
+
+// const form = e.target;
+// const formData = new FormData(form);
+
+// const title = formData.get('title')?.toString();
