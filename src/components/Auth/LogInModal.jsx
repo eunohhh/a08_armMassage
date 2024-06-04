@@ -1,6 +1,6 @@
 import { useModal } from '@/contexts/modal.context';
 import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import useAuth from '../../hooks/useAuth';
 import Backdrop from '../Elements/Backdrop';
@@ -13,7 +13,7 @@ const LogInModal = () => {
     const { logInWithGithub, logIn } = useAuth();
     const modal = useModal();
     const navigate = useNavigate();
-    const location = useLocation();
+    // const location = useLocation();
 
     const onSubmit = async (e) => {
         e.preventDefault();
@@ -42,9 +42,11 @@ const LogInModal = () => {
             alert(error);
         }
     };
-    const handleGithubClick = () => {
+    const handleGithubClick = (e) => {
+        e.preventDefault();
         modal.close();
-        logInWithGithub(location.pathname);
+        // logInWithGithub(location.pathname);
+        logInWithGithub();
     };
     const handleJoinPage = () => {
         navigate('/join');

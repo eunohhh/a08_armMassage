@@ -19,10 +19,28 @@ export const getBlogs = createAsyncThunk('blogs/getBlogs', async (_, { rejectWit
 
     const { data: likesData, error: likesError } = await supabase.from('blog_likes').select('*');
 
+    const { data: userProfiles, error: profileError } = await supabase.from('userinfo').select('*');
+
     if (likesError) {
         console.error('Error fetching blog posts with likes:', likesError);
         return rejectWithValue('가져오기 실패했다');
     }
+
+    if (profileError) {
+        console.error('Error fetching blog posts with likes:', profileError);
+        return rejectWithValue('프사 가져오기 실패했다');
+    }
+
+    if (error) {
+        console.log(error);
+        return rejectWithValue(error);
+    }
+
+    // 유저 프로필 데이터를 해시 맵으로 변환
+    const profilesMap = userProfiles.reduce((acc, profile) => {
+        acc[profile.email] = profile.profile_image;
+        return acc;
+    }, {});
 
     // 좋아요 데이터를 해시 맵으로 변환
     const likesMap = likesData.reduce((acc, like) => {
@@ -34,6 +52,7 @@ export const getBlogs = createAsyncThunk('blogs/getBlogs', async (_, { rejectWit
     const mapped = data.map((blog) => {
         return {
             ...blog,
+            profilePic: profilesMap[blog.user_id],
             likes: likesMap[blog.id] || 0 // 좋아요 수가 없으면 0으로 설정
         };
     });
@@ -169,38 +188,6 @@ export const deleteBlogs = createAsyncThunk('blogs/deleteBlogs', async (id, { re
     return data;
 });
 
-// updateLikes 좋아요 증가
-// export const updateLikes = createAsyncThunk('blogs/updateLikes', async (id, { rejectWithValue }) => {
-//     // 먼저 현재 likes 값을 가져옵니다
-//     const { data: currentData, error: fetchError } = await supabase.from('blogs').select('likes').eq('id', id).single();
-
-//     if (fetchError) {
-//         console.log('fetch error => ', fetchError);
-//         return rejectWithValue('현재 좋아요 수를 가져오는 데 실패했습니다');
-//     }
-
-//     // 현재 likes 값이 있는지 확인
-//     if (!currentData) {
-//         return rejectWithValue('데이터가 없습니다');
-//     }
-
-//     const updatedLikes = currentData.likes + 1;
-
-//     // likes 값을 1 증가시켜 업데이트합니다
-//     const { data, error } = await supabase.from('blogs').update({ likes: updatedLikes }).eq('id', id).select().single();
-
-//     if (error) {
-//         console.log('update error => ', error);
-//         return rejectWithValue('업데이트에 실패했습니다');
-//     }
-
-//     if (!data) {
-//         return rejectWithValue('업데이트된 데이터가 없습니다');
-//     }
-
-//     return data;
-// });
-
 // addLikes
 export const updateLikes = createAsyncThunk('blogs/addLikes', async (ids, { rejectWithValue }) => {
     try {
@@ -264,6 +251,25 @@ export const getLikes = createAsyncThunk('blogs/getLikes', async (blogId, { reje
     }
 
     return { blogId, count };
+});
+
+// 유저 프로필 사진 가져오기
+export const getUserProfile = createAsyncThunk('blogs/getUserProfile', async ({ user_email }, { rejectWithValue }) => {
+    const { data, error } = await supabase.from('userinfo').select('profile_image').eq('email', user_email).single();
+
+    if (error) {
+        console.log(error);
+        return rejectWithValue(error);
+    }
+
+    console.log(data.profile_image);
+
+    const result = {
+        profile: data.profile_image,
+        userEmail: user_email
+    };
+
+    return result;
 });
 
 const initialState = {
@@ -388,3 +394,35 @@ const blogSlice = createSlice({
 
 const blogReducer = blogSlice.reducer;
 export default blogReducer;
+
+// updateLikes 좋아요 증가
+// export const updateLikes = createAsyncThunk('blogs/updateLikes', async (id, { rejectWithValue }) => {
+//     // 먼저 현재 likes 값을 가져옵니다
+//     const { data: currentData, error: fetchError } = await supabase.from('blogs').select('likes').eq('id', id).single();
+
+//     if (fetchError) {
+//         console.log('fetch error => ', fetchError);
+//         return rejectWithValue('현재 좋아요 수를 가져오는 데 실패했습니다');
+//     }
+
+//     // 현재 likes 값이 있는지 확인
+//     if (!currentData) {
+//         return rejectWithValue('데이터가 없습니다');
+//     }
+
+//     const updatedLikes = currentData.likes + 1;
+
+//     // likes 값을 1 증가시켜 업데이트합니다
+//     const { data, error } = await supabase.from('blogs').update({ likes: updatedLikes }).eq('id', id).select().single();
+
+//     if (error) {
+//         console.log('update error => ', error);
+//         return rejectWithValue('업데이트에 실패했습니다');
+//     }
+
+//     if (!data) {
+//         return rejectWithValue('업데이트된 데이터가 없습니다');
+//     }
+
+//     return data;
+// });

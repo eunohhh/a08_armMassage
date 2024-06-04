@@ -2,24 +2,68 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import supabase from '../supabase/supabaseClient';
 
 // 깃헙 로그인
-export const signInWithGithub = createAsyncThunk('auth/signInWithGithub', async (prevLocation, { rejectWithValue }) => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'github',
-        options: {
-            redirectTo: `${window.location.origin}${prevLocation}` // 원하는 경로로 수정
+export const signInWithGithub = createAsyncThunk('auth/signInWithGithub', async (_, { rejectWithValue }) => {
+    try {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'github'
+        });
+
+        if (error) {
+            console.error('OAuth 로그인 에러:', error);
+            return rejectWithValue('OAuth 로그인 에러');
         }
-    });
 
-    if (error) {
-        console.log('error => ', error);
-        return rejectWithValue('OAuth 로그인 에러');
-    }
-    if (!data) {
-        return rejectWithValue('로그인 실패?');
-    }
-    // data === user
+        if (!data) {
+            return rejectWithValue('로그인 실패?');
+        }
 
-    return data;
+        const user = data.user;
+
+        // user의 아바타 URL 가져오기
+        const avatarUrl = user?.identities?.[0]?.identity_data?.avatar_url;
+        if (!avatarUrl) {
+            return rejectWithValue('아바타 URL을 가져올 수 없습니다.');
+        }
+
+        // 아바타 이미지를 스토리지에 업로드
+        const fileName = `avatars/${user.id}.jpg`;
+        const response = await fetch(avatarUrl);
+        const blob = await response.blob();
+
+        const { error: storageError } = await supabase.storage.from('blogs').upload(fileName, blob, {
+            cacheControl: '3600',
+            upsert: true,
+            contentType: 'image/jpeg'
+        });
+
+        if (storageError) {
+            console.error('스토리지 업로드 에러:', storageError);
+            return rejectWithValue('스토리지 업로드 에러');
+        }
+
+        // 업로드된 이미지의 URL 가져오기
+        const { publicURL } = supabase.storage.from('blogs').getPublicUrl(fileName);
+
+        if (!publicURL) {
+            return rejectWithValue('업로드된 파일 URL을 가져올 수 없습니다.');
+        }
+
+        // userinfo 테이블에 profile_image 컬럼 업데이트
+        const { error: updateError } = await supabase
+            .from('userinfo')
+            .update({ profile_image: publicURL })
+            .eq('user_id', user.id);
+
+        if (updateError) {
+            console.error('프로필 이미지 업데이트 에러:', updateError);
+            return rejectWithValue('프로필 이미지 업데이트 에러');
+        }
+
+        return user;
+    } catch (error) {
+        console.error('에러 발생:', error);
+        return rejectWithValue('로그인 중 에러 발생');
+    }
 });
 
 // 회원가입
@@ -84,11 +128,15 @@ export const signOut = createAsyncThunk('auth/signOut', async (_, { rejectWithVa
 
 // 로그인 상태 체크
 export const checkSignIn = createAsyncThunk('auth/checkSignIn', async () => {
-    const session = await supabase.auth.getUser();
-    const isSignIn = !!session.data.user;
+    const { data, error } = await supabase.auth.getSession();
+    if (error) {
+        throw new Error('Failed to fetch user');
+    }
 
-    // return { isSignIn, session: session.data.user };
-    return isSignIn;
+    return {
+        user: data.session.user,
+        session: data.session
+    };
 });
 
 const initialState = {
@@ -170,16 +218,22 @@ const authSlice = createSlice({
                 state.loading = true;
                 state.error = null;
                 state.isLoggedIn = false;
+                state.user = null;
+                state.session = null;
             })
             .addCase(checkSignIn.fulfilled, (state, action) => {
                 state.loading = false;
                 state.error = null;
-                state.isLoggedIn = action.payload;
+                state.isLoggedIn = true;
+                state.user = action.payload.user;
+                state.session = action.payload.session;
             })
             .addCase(checkSignIn.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
                 state.isLoggedIn = false;
+                state.user = null;
+                state.session = null;
             });
     }
 });

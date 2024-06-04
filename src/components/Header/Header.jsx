@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useModal } from '../../contexts/modal.context';
@@ -7,19 +7,19 @@ import Button from '../Elements/Button';
 
 const Header = () => {
     const { logOut, user } = useAuth();
-    const profilePic = useRef();
-
-    console.log(user);
-
-    if (user) {
-        if (user.app_metadata.provider !== 'email') {
-            profilePic.current = user.identities[0].identity_data.avatar_url;
-        } else {
-            profilePic.current = user.profile;
-        }
-    }
+    const [profilePic, setProfilePic] = useState('');
     const navigate = useNavigate();
     const modal = useModal();
+
+    useEffect(() => {
+        if (user) {
+            if (user?.app_metadata?.provider !== 'email') {
+                setProfilePic(user.identities[0].identity_data.avatar_url);
+            } else {
+                setProfilePic(user.profile);
+            }
+        }
+    }, [user]);
 
     const onclickLogo = () => {
         navigate('/');
@@ -44,6 +44,7 @@ const Header = () => {
     const onclickLogout = () => {
         // setIsLogin(!isLogin);
         logOut();
+        navigate('/');
     };
 
     return (
@@ -55,11 +56,7 @@ const Header = () => {
                 <StyledLoginArea>
                     {user ? (
                         <StyledLogin>
-                            <StyledProfilePic
-                                onClick={onclickProfile}
-                                src={profilePic.current}
-                                alt="Profile 이미지 사진"
-                            />
+                            <StyledProfilePic onClick={onclickProfile} src={profilePic} alt="Profile 이미지 사진" />
                             <Button onClick={onClickWrite} buttonText="글쓰기" color="#a055ff"></Button>
                             <Button buttonText="로그아웃" onClick={onclickLogout} color="#a055ff"></Button>
                         </StyledLogin>

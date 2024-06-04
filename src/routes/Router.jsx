@@ -22,16 +22,11 @@ const Router = () => {
                     <Routes>
                         <Route path="/" element={<HomePage />} />
                         <Route path="/join" element={<JoinPage />} />
-                        <Route exact path="/" element={<ProtectedRoute />}>
+                        <Route element={<ProtectedRoute />}>
                             <Route path="/my" element={<PersonalPage />} />
-                        </Route>
-                        <Route exact path="/" element={<ProtectedRoute />}>
                             <Route path="/write" element={<WritePage />} />
                         </Route>
-                        <Route path="/detail">
-                            <Route path=":id" element={<DetailPage />} />
-                        </Route>
-
+                        <Route path="/detail/:id" element={<DetailPage />} />
                     </Routes>
                 </Layout>
             </ModalProvider>
