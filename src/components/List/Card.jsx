@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const Card = ({ blog, content }) => {
     const navigate = useNavigate();
-
+    console.log(blog.created_at);
     const handleCardClick = () => {
         console.log('개별 글 페이지로 이동');
         navigate(`/detail/${blog.id}`, { state: { blog } });
@@ -11,6 +11,7 @@ const Card = ({ blog, content }) => {
 
     const onClickProfile = () => {
         console.log('개별 프로필로 이동');
+        navigate('/my');
     };
 
     const dateFormat = (date) => date.slice(0, 10);
