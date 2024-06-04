@@ -1,5 +1,11 @@
+import MyPage from '@/components/My/MyPage';
+
 function PersonalPage() {
-    return <div>PersonalPage</div>;
+    return (
+        <>
+            <MyPage />
+        </>
+    );
 }
 
 export default PersonalPage;
