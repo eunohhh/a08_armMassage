@@ -226,7 +226,6 @@ export const updateLikes = createAsyncThunk('blogs/addLikes', async (ids, { reje
             console.log('fetch error => ', error);
             return rejectWithValue('현재 좋아요 수 업데이트 실패했습니다');
         }
-
         return data;
     } catch (err) {
         console.log('unexpected error => ', err);
@@ -296,6 +295,7 @@ const blogSlice = createSlice({
             .addCase(getBlogs.fulfilled, (prevState, action) => {
                 prevState.blogLoading = false;
                 prevState.blogs = action.payload;
+                prevState.blogError = null;
             })
             // create
             .addCase(createBlogs.pending, (prevState) => {
@@ -338,7 +338,7 @@ const blogSlice = createSlice({
                 prevState.blogError = action.error.message;
             })
             .addCase(deleteBlogs.fulfilled, (prevState, action) => {
-                console.log(action.payload);
+                // console.log(action.payload);
                 // 페이로드가 아이디
                 prevState.blogLoading = false;
                 prevState.blogs = prevState.blogs.filter((blog) => blog.id !== action.payload);
@@ -355,6 +355,8 @@ const blogSlice = createSlice({
                 prevState.blogLoading = false;
                 if (action.payload.message === '이미 좋아요를 눌렀습니다') {
                     prevState.blogError = action.payload.message;
+                } else {
+                    prevState.blogError = null;
                 }
             })
             // getLikes
