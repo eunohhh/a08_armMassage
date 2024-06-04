@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-const regex = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))/g;
+// const regex = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))/g;
 
 const removeImgTags = (htmlString) => {
     return htmlString.replace(/<img[^>]*>/gi, '');
@@ -16,9 +16,15 @@ const Card = ({ blog }) => {
 
     const onClickProfile = () => {
         console.log('개별 프로필로 이동');
+        navigate('/my');
     };
 
     const dateFormat = (date) => date.slice(0, 10);
+
+    const idFormat = (id) => {
+        const email = id.split('@');
+        return email[0];
+    };
 
     return (
         <StyledLi>
@@ -37,7 +43,7 @@ const Card = ({ blog }) => {
                 <StyledInfo>
                     <StyledProfile onClick={onClickProfile}>
                         <StyledProfilePic src={blog.profilePic} alt="Profile 이미지 사진" />
-                        <StyledWriter>{blog.user_id.match(regex)}</StyledWriter>
+                        <StyledWriter>{idFormat(blog.user_id)}</StyledWriter>
                     </StyledProfile>
                     <StyledLikesContainer>
                         <StyledLikes>❤️ {blog.likes}</StyledLikes>
@@ -92,7 +98,6 @@ const StyledTexts = styled.div`
 `;
 
 const StyledTitle = styled.h3`
-    /* margin: 0 0 20px 0; */
     padding-bottom: 10px;
     font-size: 18px;
     font-weight: 600;
@@ -104,7 +109,6 @@ const StyledTitle = styled.h3`
 
 const StyledText = styled.p`
     margin: 10px 0 10px 0;
-    /* padding: 20px 0 10px 0; */
     font-size: 14px;
     width: 100%;
     display: -webkit-box;
