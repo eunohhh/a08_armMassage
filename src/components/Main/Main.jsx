@@ -10,7 +10,7 @@ const Main = () => {
 
     //blog.contents.match(/<p>(.*?)<\/p>/)?.[1]
     return (
-        <StyledSection $blogs={blogs}>
+        <StyledSection>
             {blogs.length > 0 ? (
                 <StyledUl>{blogs && blogs.map((blog) => <Card key={blog.id} blog={blog} />)}</StyledUl>
             ) : (
@@ -25,7 +25,6 @@ const StyledSection = styled.section`
     justify-content: center;
     align-items: center;
     padding: 4rem 0;
-    background-color: ${({ $blogs }) => ($blogs.length > 0 ? '#9b9494' : 'white')};
     margin: 0 auto;
     width: 100%;
     max-width: 1600px;
