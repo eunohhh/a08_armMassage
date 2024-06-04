@@ -10,6 +10,7 @@ const Header = ({ profilePic }) => {
     const modal = useModal();
 
     const onclickLogo = () => {
+        navigate('/');
         console.log('메인페이지 이동');
     };
 
