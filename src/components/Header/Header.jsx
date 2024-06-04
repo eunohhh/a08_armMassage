@@ -13,10 +13,10 @@ const Header = () => {
 
     useEffect(() => {
         if (user) {
-            if (user?.app_metadata?.provider !== 'email') {
-                setProfilePic(user.identities[0].identity_data.avatar_url);
-            } else {
+            if (user?.app_metadata?.provider === 'email') {
                 setProfilePic(user.profile);
+            } else {
+                setProfilePic(user.identities[0].identity_data.avatar_url);
             }
         }
     }, [user]);

@@ -22,11 +22,7 @@ const useBlogs = () => {
     const addBlogs = (newBlog) => dispatch(createBlogs(newBlog)).then(() => dispatch(getBlogs()));
     const upBlogs = (newBlog) => dispatch(updateBlogs(newBlog)).then(() => dispatch(getBlogs()));
     const delBlogs = (blogId) => dispatch(deleteBlogs(blogId)).then(() => dispatch(getBlogs()));
-    const addLikes = (ids) => {
-        console.log('왜왜왜애');
-        dispatch(updateLikes(ids)).then(() => dispatch(getBlogs()));
-    };
-
+    const addLikes = (ids) => dispatch(updateLikes(ids)).then(() => dispatch(getBlogs()));
     const addImgs = (imgFile) => dispatch(createImgs(imgFile));
 
     return {
