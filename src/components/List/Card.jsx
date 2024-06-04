@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const Card = ({ blog, content }) => {
     const navigate = useNavigate();
-    console.log(blog.created_at);
+
     const handleCardClick = () => {
         console.log('개별 글 페이지로 이동');
         navigate(`/detail/${blog.id}`, { state: { blog } });
@@ -84,7 +84,6 @@ const StyledTexts = styled.div`
 `;
 
 const StyledTitle = styled.h3`
-    /* margin: 0 0 20px 0; */
     padding-bottom: 10px;
     font-size: 18px;
     font-weight: 600;
@@ -96,7 +95,6 @@ const StyledTitle = styled.h3`
 
 const StyledText = styled.p`
     margin: 10px 0 10px 0;
-    /* padding: 20px 0 10px 0; */
     font-size: 14px;
     width: 280px;
     display: -webkit-box;
