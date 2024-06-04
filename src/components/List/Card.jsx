@@ -11,6 +11,7 @@ const Card = ({ blog, content }) => {
 
     const onClickProfile = () => {
         console.log('개별 프로필로 이동');
+        navigate('/my');
     };
 
     const dateFormat = (date) => date.slice(0, 10);
@@ -83,7 +84,6 @@ const StyledTexts = styled.div`
 `;
 
 const StyledTitle = styled.h3`
-    /* margin: 0 0 20px 0; */
     padding-bottom: 10px;
     font-size: 18px;
     font-weight: 600;
@@ -95,7 +95,6 @@ const StyledTitle = styled.h3`
 
 const StyledText = styled.p`
     margin: 10px 0 10px 0;
-    /* padding: 20px 0 10px 0; */
     font-size: 14px;
     width: 280px;
     display: -webkit-box;

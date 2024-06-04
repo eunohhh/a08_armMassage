@@ -13,10 +13,10 @@ function Layout({ children }) {
 export default Layout;
 
 const StyledMain = styled.main`
-    width: 1600px;
+    width: 100%;
+    max-width: 1600px;
     margin: 0 auto;
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
 `;
