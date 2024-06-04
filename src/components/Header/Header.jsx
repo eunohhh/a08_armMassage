@@ -10,11 +10,13 @@ const Header = ({ profilePic }) => {
     const modal = useModal();
 
     const onclickLogo = () => {
+        navigate('/');
         console.log('메인페이지 이동');
     };
 
     const onclickProfile = () => {
         console.log('프로필 페이지 이동');
+        navigate('/my');
     };
 
     const onClickWrite = () => {
@@ -60,12 +62,16 @@ const StyledHeader = styled.header`
     background-color: #3f3f3f;
     color: #fff;
     padding: 1rem;
+    box-sizing: border-box;
+    height: 72px;
 `;
 
 const StyledHeaderInner = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    max-width: 1600px;
+    margin: 0 auto;
 `;
 
 const StyledLogo = styled.div`
