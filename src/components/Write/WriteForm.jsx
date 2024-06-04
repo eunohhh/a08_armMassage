@@ -13,9 +13,10 @@ function WriteForm() {
     const location = useLocation();
     const blog = location.state !== null ? location.state.blog : null;
 
+    console.log(blog);
     const { user } = useAuth();
     const { addBlogs } = useBlogs();
-    const [contents, setContents] = useState(null);
+    const [contents, setContents] = useState(blog ? blog.contents : null);
     const [files, setFiles] = useState([]);
 
     const quillRef = useRef();
@@ -57,7 +58,7 @@ function WriteForm() {
                 name="title"
                 placeholder={blog ? blog.contents : '타이틀을 입력하세요'}
             ></StyledInput>
-            <Editor ref={quillRef} onTextChange={setContents} setFiles={setFiles} />
+            <Editor ref={quillRef} onTextChange={setContents} setFiles={setFiles} blog={blog} />
             <StyledDiv>
                 <Button buttonText={'출간하기'} color={'#a055ff'} type={'submit'} />
             </StyledDiv>

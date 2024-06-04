@@ -13,7 +13,7 @@ function Layout({ children }) {
 export default Layout;
 
 const StyledMain = styled.main`
-    width: 1600px;
+    max-width: 1600px;
     margin: 0 auto;
     display: flex;
     justify-content: center;

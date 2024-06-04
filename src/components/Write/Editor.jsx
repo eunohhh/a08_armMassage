@@ -35,7 +35,7 @@ const imageHandler = (quill, setFiles) => {
 };
 
 // Editor is an uncontrolled React component
-const Editor = forwardRef(({ onTextChange, setFiles }, ref) => {
+const Editor = forwardRef(({ onTextChange, setFiles, blog }, ref) => {
     const containerRef = useRef(null);
     const onTextChangeRef = useRef(onTextChange);
 
@@ -46,12 +46,12 @@ const Editor = forwardRef(({ onTextChange, setFiles }, ref) => {
     useEffect(() => {
         const container = containerRef.current;
         container.style.width = '800px';
-        container.style.height = '500px';
+        container.style.height = '600px';
         container.style.margin = '1rem 2rem';
         const editorContainer = container.appendChild(container.ownerDocument.createElement('div'));
         const quill = new Quill(editorContainer, {
             theme: 'snow',
-            placeholder: '여기에 입력하세요...',
+            placeholder: blog ? blog.contents : '여기에 입력하세요...',
             modules: {
                 toolbar: {
                     container: [
