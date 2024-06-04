@@ -67,6 +67,8 @@ const StyledHeaderInner = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    max-width: 1600px;
+    margin: 0 auto;
 `;
 
 const StyledLogo = styled.div`

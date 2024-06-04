@@ -20,9 +20,10 @@ const Main = () => {
 const StyledSection = styled.section`
     display: flex;
     justify-content: center;
-    padding: 2rem;
+    padding: 4rem 0;
     background-color: #9b9494;
     margin: 0 auto;
+    width: 1600px;
 `;
 
 const StyledUl = styled.ul`
