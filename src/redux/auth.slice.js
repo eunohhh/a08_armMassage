@@ -46,10 +46,15 @@ export const signIn = createAsyncThunk('auth/signIn', async ({ email, password }
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-        console.log('error => ', error);
-        return rejectWithValue('auth 로그인 에러');
-    }
+        console.log('error => ', error.message);
+        console.log(error.message);
 
+        if (error.message.includes('Invalid login credentials')) {
+            return rejectWithValue('아이디와 비번을 확인하세요!');
+        } else {
+            return rejectWithValue('로그인 에러');
+        }
+    }
     return data;
 });
 

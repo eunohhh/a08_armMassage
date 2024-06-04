@@ -84,7 +84,7 @@ function WriteForm() {
             ></StyledInput>
             <Editor ref={quillRef} onTextChange={setContents} setFiles={setFiles} blog={blog} />
             <StyledDiv>
-                <Button buttonText={'출간하기'} color={'#a055ff'} type={'submit'} />
+                <Button buttonText={blog ? '수정하기' : '출간하기'} color={'#a055ff'} type={'submit'} />
             </StyledDiv>
         </StyledForm>
     );

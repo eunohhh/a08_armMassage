@@ -15,7 +15,7 @@ const LogInModal = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
 
         const idType = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -33,8 +33,14 @@ const LogInModal = () => {
             password: password
         };
 
-        logIn(authObject);
-        modal.close();
+        // 이부분 추가 : 잘못된 아이디로 로그인했을 경우
+        try {
+            await logIn(authObject).unwrap();
+            modal.close();
+        } catch (error) {
+            console.log(error);
+            alert(error);
+        }
     };
     const handleGithubClick = () => {
         modal.close();
