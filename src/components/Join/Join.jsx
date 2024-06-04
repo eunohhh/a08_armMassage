@@ -3,22 +3,22 @@ import styled from 'styled-components';
 import JoinInput from '../Elements/JoinInput';
 import { useState } from 'react';
 
+const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+};
+
+const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+};
+
+const handlePasswordConfirmChange = (event) => {
+    setPasswordConfirm(event.target.value);
+};
+
 const Join = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirm, setPasswordConfirm] = useState('');
-
-    const handleEmailChange = (event) => {
-        setEmail(event.target.value);
-    };
-
-    const handlePasswordChange = (event) => {
-        setPassword(event.target.value);
-    };
-
-    const handlePasswordConfirmChange = (event) => {
-        setPasswordConfirm(event.target.value);
-    };
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -46,7 +46,14 @@ const Join = () => {
 
     return (
         <FormBox onSubmit={handleSubmit}>
-            <Input id="email" type="email" label="이메일" eholder="E-mail" value={email} onChange={handleEmailChange} />
+            <JoinInput
+                id="email"
+                type="email"
+                label="이메일"
+                eholder="E-mail"
+                value={email}
+                onChange={handleEmailChange}
+            />
 
             <JoinInput
                 id="password"
