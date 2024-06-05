@@ -9,10 +9,13 @@ import MyWritingList from '../List/MyWritingList';
 const MyList = () => {
     const navigate = useNavigate();
     const { blogs } = useBlogs();
-    const { userInfo } = useAuth();
+    const { user, userInfo } = useAuth();
     const location = useLocation();
     const { email } = location.state;
     const [matchedUser, setMatchedUser] = useState(null);
+    const [isCurrentLoggedInUser, setIsCurrentLoggedInUser] = useState(false);
+
+    console.log(isCurrentLoggedInUser);
 
     // console.log(matchedUser);
     // console.log(blogs);
@@ -30,6 +33,14 @@ const MyList = () => {
             setMatchedUser(matchedUser);
         }
     }, [userInfo, email]);
+
+    useEffect(() => {
+        if (user) {
+            if (user.email === email) {
+                setIsCurrentLoggedInUser(true);
+            }
+        }
+    }, [user, email]);
 
     return (
         <StyledSection>
