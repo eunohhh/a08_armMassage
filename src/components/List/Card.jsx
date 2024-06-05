@@ -16,7 +16,7 @@ const Card = ({ blog }) => {
 
     const onClickProfile = () => {
         console.log('개별 프로필로 이동');
-        navigate('/my');
+        navigate(`/mylist/${blog.id}`, { state: { email: blog.user_id } });
     };
 
     const dateFormat = (date) => date.slice(0, 10);
@@ -55,6 +55,8 @@ const Card = ({ blog }) => {
 };
 
 const StyledLi = styled.li`
+    display: flex;
+    justify-content: center;
     width: 100%;
 `;
 

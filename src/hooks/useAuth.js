@@ -13,13 +13,14 @@ import {
 
 const useAuth = () => {
     const dispatch = useDispatch();
-    const { user, session, loading, error, isLoggedIn } = useSelector(
+    const { user, session, loading, error, isLoggedIn, userInfo } = useSelector(
         (state) => ({
             user: state.auth.user,
             session: state.auth.session,
             loading: state.auth.loading,
             error: state.auth.error,
-            isLoggedIn: state.auth.isLoggedIn
+            isLoggedIn: state.auth.isLoggedIn,
+            userInfo: state.auth.userInfo
         }),
         shallowEqual
     );
@@ -28,6 +29,7 @@ const useAuth = () => {
 
     useEffect(() => {
         dispatch(checkSignIn());
+        dispatch(getUserInfo());
     }, [dispatch]);
 
     const logIn = (logInData) => dispatch(signIn(logInData)).then(() => dispatch(checkSignIn()));
@@ -46,6 +48,7 @@ const useAuth = () => {
         loading,
         error,
         isLoggedIn,
+        userInfo,
         logIn,
         logOut,
         joinUp,
