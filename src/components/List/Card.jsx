@@ -29,7 +29,7 @@ const Card = ({ blog }) => {
     return (
         <StyledLi>
             <StyledCardContainer>
-                <StyledImage onClick={handleCardClick} src={blog.image} alt="post 타이틀 이미지" />
+                <StyledImage onClick={handleCardClick} $src={`${blog.image}`} alt="post 타이틀 이미지" />
                 <StyledContent>
                     <StyledTexts>
                         <StyledTitle onClick={handleCardClick}>{blog.title}</StyledTitle>
@@ -73,13 +73,13 @@ const StyledCardContainer = styled.div`
 
 const StyledImage = styled.div`
     flex: 8;
-    background-image: url(${(props) => props.src});
+    background-image: url(${(props) => "'" + props.$src + "'"});
     background-repeat: no-repeat;
     background-size: cover;
     cursor: pointer;
 
     ${(props) =>
-        !props.src &&
+        !props.$src &&
         `
         flex: 0;
         display: none;

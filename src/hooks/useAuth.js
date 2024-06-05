@@ -1,6 +1,15 @@
 import { useEffect } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { checkSignIn, signIn, signInWithGithub, signOut, signUp } from '../redux/auth.slice';
+import {
+    checkSignIn,
+    getUserInfo,
+    signIn,
+    signInWithGithub,
+    signOut,
+    signUp,
+    updateNickname,
+    updateProfile
+} from '../redux/auth.slice';
 
 const useAuth = () => {
     const dispatch = useDispatch();
@@ -15,14 +24,21 @@ const useAuth = () => {
         shallowEqual
     );
 
+    // console.log(user);
+
     useEffect(() => {
         dispatch(checkSignIn());
     }, [dispatch]);
 
-    const logIn = (logInData) => dispatch(signIn(logInData));
+    const logIn = (logInData) => dispatch(signIn(logInData)).then(() => dispatch(checkSignIn()));
     const logOut = () => dispatch(signOut());
     const joinUp = (logInData) => dispatch(signUp(logInData));
     const logInWithGithub = (prevLocation) => dispatch(signInWithGithub(prevLocation));
+    // pickUpdate = { file, email }
+    const upProfile = (picUpdate) => dispatch(updateProfile(picUpdate));
+    // nickUpdate = { nickName, email }
+    const upNickName = (nickUpdate) => dispatch(updateNickname(nickUpdate));
+    const getUser = () => dispatch(getUserInfo());
 
     return {
         user,
@@ -33,7 +49,10 @@ const useAuth = () => {
         logIn,
         logOut,
         joinUp,
-        logInWithGithub
+        logInWithGithub,
+        upProfile,
+        upNickName,
+        getUser
     };
 };
 

@@ -28,6 +28,7 @@ function LikeButton({ id }) {
     };
 
     useEffect(() => {
+        console.log(blogError);
         if (blogError) {
             if (blogError === '이미 좋아요를 눌렀습니다') alert('이미 좋아요를 눌렀습니다');
         }

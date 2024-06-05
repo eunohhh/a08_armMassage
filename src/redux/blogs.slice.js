@@ -19,10 +19,28 @@ export const getBlogs = createAsyncThunk('blogs/getBlogs', async (_, { rejectWit
 
     const { data: likesData, error: likesError } = await supabase.from('blog_likes').select('*');
 
+    const { data: userProfiles, error: profileError } = await supabase.from('userinfo').select('*');
+
     if (likesError) {
         console.error('Error fetching blog posts with likes:', likesError);
         return rejectWithValue('가져오기 실패했다');
     }
+
+    if (profileError) {
+        console.error('Error fetching blog posts with likes:', profileError);
+        return rejectWithValue('프사 가져오기 실패했다');
+    }
+
+    if (error) {
+        console.log(error);
+        return rejectWithValue(error);
+    }
+
+    // 유저 프로필 데이터를 해시 맵으로 변환
+    const profilesMap = userProfiles.reduce((acc, profile) => {
+        acc[profile.email] = profile.profile_image;
+        return acc;
+    }, {});
 
     // 좋아요 데이터를 해시 맵으로 변환
     const likesMap = likesData.reduce((acc, like) => {
@@ -34,6 +52,7 @@ export const getBlogs = createAsyncThunk('blogs/getBlogs', async (_, { rejectWit
     const mapped = data.map((blog) => {
         return {
             ...blog,
+            profilePic: profilesMap[blog.user_id],
             likes: likesMap[blog.id] || 0 // 좋아요 수가 없으면 0으로 설정
         };
     });
@@ -109,8 +128,6 @@ export const createImgs = createAsyncThunk('blogs/createImgs', async (file, { re
 export const updateBlogs = createAsyncThunk('blogs/updateBlogs', async (updateBlog, { rejectWithValue }) => {
     let imgData, imgError;
 
-    console.log(updateBlog);
-
     // 파일이 있고 타입이 스트링이 아닌 경우(타입이 스트링인 경우는 src 값이 넘어왔을 때임)에만 파일 업로드를 수행
     if (updateBlog.file !== null) {
         if (typeof updateBlog.file !== 'string') {
@@ -171,38 +188,6 @@ export const deleteBlogs = createAsyncThunk('blogs/deleteBlogs', async (id, { re
     return data;
 });
 
-// updateLikes 좋아요 증가
-// export const updateLikes = createAsyncThunk('blogs/updateLikes', async (id, { rejectWithValue }) => {
-//     // 먼저 현재 likes 값을 가져옵니다
-//     const { data: currentData, error: fetchError } = await supabase.from('blogs').select('likes').eq('id', id).single();
-
-//     if (fetchError) {
-//         console.log('fetch error => ', fetchError);
-//         return rejectWithValue('현재 좋아요 수를 가져오는 데 실패했습니다');
-//     }
-
-//     // 현재 likes 값이 있는지 확인
-//     if (!currentData) {
-//         return rejectWithValue('데이터가 없습니다');
-//     }
-
-//     const updatedLikes = currentData.likes + 1;
-
-//     // likes 값을 1 증가시켜 업데이트합니다
-//     const { data, error } = await supabase.from('blogs').update({ likes: updatedLikes }).eq('id', id).select().single();
-
-//     if (error) {
-//         console.log('update error => ', error);
-//         return rejectWithValue('업데이트에 실패했습니다');
-//     }
-
-//     if (!data) {
-//         return rejectWithValue('업데이트된 데이터가 없습니다');
-//     }
-
-//     return data;
-// });
-
 // addLikes
 export const updateLikes = createAsyncThunk('blogs/addLikes', async (ids, { rejectWithValue }) => {
     try {
@@ -241,7 +226,6 @@ export const updateLikes = createAsyncThunk('blogs/addLikes', async (ids, { reje
             console.log('fetch error => ', error);
             return rejectWithValue('현재 좋아요 수 업데이트 실패했습니다');
         }
-
         return data;
     } catch (err) {
         console.log('unexpected error => ', err);
@@ -268,6 +252,25 @@ export const getLikes = createAsyncThunk('blogs/getLikes', async (blogId, { reje
     return { blogId, count };
 });
 
+// 유저 프로필 사진 가져오기
+export const getUserProfile = createAsyncThunk('blogs/getUserProfile', async ({ user_email }, { rejectWithValue }) => {
+    const { data, error } = await supabase.from('userinfo').select('profile_image').eq('email', user_email).single();
+
+    if (error) {
+        console.log(error);
+        return rejectWithValue(error);
+    }
+
+    console.log(data.profile_image);
+
+    const result = {
+        profile: data.profile_image,
+        userEmail: user_email
+    };
+
+    return result;
+});
+
 const initialState = {
     blogs: [],
     blogLoading: false,
@@ -292,6 +295,7 @@ const blogSlice = createSlice({
             .addCase(getBlogs.fulfilled, (prevState, action) => {
                 prevState.blogLoading = false;
                 prevState.blogs = action.payload;
+                prevState.blogError = null;
             })
             // create
             .addCase(createBlogs.pending, (prevState) => {
@@ -334,7 +338,7 @@ const blogSlice = createSlice({
                 prevState.blogError = action.error.message;
             })
             .addCase(deleteBlogs.fulfilled, (prevState, action) => {
-                console.log(action.payload);
+                // console.log(action.payload);
                 // 페이로드가 아이디
                 prevState.blogLoading = false;
                 prevState.blogs = prevState.blogs.filter((blog) => blog.id !== action.payload);
@@ -351,6 +355,8 @@ const blogSlice = createSlice({
                 prevState.blogLoading = false;
                 if (action.payload.message === '이미 좋아요를 눌렀습니다') {
                     prevState.blogError = action.payload.message;
+                } else {
+                    prevState.blogError = null;
                 }
             })
             // getLikes
@@ -390,3 +396,35 @@ const blogSlice = createSlice({
 
 const blogReducer = blogSlice.reducer;
 export default blogReducer;
+
+// updateLikes 좋아요 증가
+// export const updateLikes = createAsyncThunk('blogs/updateLikes', async (id, { rejectWithValue }) => {
+//     // 먼저 현재 likes 값을 가져옵니다
+//     const { data: currentData, error: fetchError } = await supabase.from('blogs').select('likes').eq('id', id).single();
+
+//     if (fetchError) {
+//         console.log('fetch error => ', fetchError);
+//         return rejectWithValue('현재 좋아요 수를 가져오는 데 실패했습니다');
+//     }
+
+//     // 현재 likes 값이 있는지 확인
+//     if (!currentData) {
+//         return rejectWithValue('데이터가 없습니다');
+//     }
+
+//     const updatedLikes = currentData.likes + 1;
+
+//     // likes 값을 1 증가시켜 업데이트합니다
+//     const { data, error } = await supabase.from('blogs').update({ likes: updatedLikes }).eq('id', id).select().single();
+
+//     if (error) {
+//         console.log('update error => ', error);
+//         return rejectWithValue('업데이트에 실패했습니다');
+//     }
+
+//     if (!data) {
+//         return rejectWithValue('업데이트된 데이터가 없습니다');
+//     }
+
+//     return data;
+// });

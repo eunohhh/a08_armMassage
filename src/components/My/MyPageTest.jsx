@@ -1,20 +1,29 @@
-import { authSliceName } from '@/redux/auth.slice';
+import useAuth from '@/hooks/useAuth';
 import getDataUrl from '@/utils/getDataUrl';
-import { useState } from 'react';
+import resizeAndConvertImage from '@/utils/resizeAndConvertImg';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-function MyPage() {
-    const [profileImage, setProfileImage] = useState('images/blank-profile-picture.png');
-    const [profileName, setProfileName] = useState('');
+function MyPageTest() {
+    const { user, upProfile, upNickName } = useAuth();
     const navigate = useNavigate();
+
+    const [profileImage, setProfileImage] = useState('');
+    const [profileName, setProfileName] = useState('');
+    const [userEmail, setUserEmail] = useState('');
+    const [imgFile, setImgFile] = useState(null);
 
     const handleImageChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
             try {
+                const convertedImg = await resizeAndConvertImage(file);
                 const base64 = await getDataUrl(file);
+
+                console.log(convertedImg);
                 setProfileImage(base64);
+                setImgFile(convertedImg);
             } catch (error) {
                 console.error('이미지 가져오기에 실패하였습니다.', error);
             }
@@ -25,9 +34,28 @@ function MyPage() {
         setProfileName(e.target.value);
     };
 
-    const handleSubmitName = (e) => {
+    // 닉네임, 프로필사진 변경
+    const handleSubmit = (e) => {
         e.preventDefault();
-        // console.log(profileName);
+
+        if (imgFile) {
+            const picUpdate = {
+                file: imgFile,
+                email: userEmail
+            };
+
+            upProfile(picUpdate);
+        }
+
+        if (!profileName) return alert('변경된 것이 없습니다!');
+
+        const nickUpdate = {
+            nickName: profileName,
+            email: userEmail
+        };
+
+        upNickName(nickUpdate);
+
         setProfileName('');
     };
 
@@ -35,13 +63,21 @@ function MyPage() {
         navigate('/');
     };
 
+    useEffect(() => {
+        if (user) {
+            setProfileImage(user.profile);
+            setProfileName(user.nickName);
+            setUserEmail(user.email);
+        }
+    }, [user]);
+
     return (
         <Section>
             <LeftDiv>
                 <ImageBox>
                     <img
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        src={profileImage}
+                        src={profileImage ? profileImage : user && user.profile && user.profile}
                         alt="profile image"
                     />
                 </ImageBox>
@@ -59,9 +95,9 @@ function MyPage() {
             <RightDiv>
                 <Label>이름 변경하기</Label>
                 <br />
-                <Input value={profileName} placeholder={authSliceName} onChange={handleNameChange} />
+                <Input value={profileName} placeholder={user && user.nickName} onChange={handleNameChange} />
                 <Buttons>
-                    <StyledButton color="#a055ff" onClick={handleSubmitName}>
+                    <StyledButton color="#a055ff" onClick={handleSubmit}>
                         저장
                     </StyledButton>
                     <StyledButton color="#a055ff" onClick={handleBackClick}>
@@ -139,4 +175,4 @@ const StyledButton = styled.button`
     }
 `;
 
-export default MyPage;
+export default MyPageTest;

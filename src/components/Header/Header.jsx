@@ -1,13 +1,25 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useModal } from '../../contexts/modal.context';
 import useAuth from '../../hooks/useAuth';
 import Button from '../Elements/Button';
 
-const Header = ({ profilePic }) => {
-    const { isLoggedIn, logOut } = useAuth();
+const Header = () => {
+    const { logOut, user } = useAuth();
+    const [profilePic, setProfilePic] = useState('');
     const navigate = useNavigate();
     const modal = useModal();
+
+    useEffect(() => {
+        if (user) {
+            if (user?.app_metadata?.provider === 'email') {
+                setProfilePic(user.profile);
+            } else {
+                setProfilePic(user.identities[0].identity_data.avatar_url);
+            }
+        }
+    }, [user]);
 
     const onclickLogo = () => {
         navigate('/');
@@ -32,6 +44,7 @@ const Header = ({ profilePic }) => {
     const onclickLogout = () => {
         // setIsLogin(!isLogin);
         logOut();
+        navigate('/');
     };
 
     return (
@@ -41,7 +54,7 @@ const Header = ({ profilePic }) => {
                     Logo
                 </StyledLogo>
                 <StyledLoginArea>
-                    {isLoggedIn ? (
+                    {user ? (
                         <StyledLogin>
                             <StyledProfilePic onClick={onclickProfile} src={profilePic} alt="Profile 이미지 사진" />
                             <Button onClick={onClickWrite} buttonText="글쓰기" color="#a055ff"></Button>
