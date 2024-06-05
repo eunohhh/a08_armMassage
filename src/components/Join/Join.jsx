@@ -2,23 +2,28 @@ import React from 'react';
 import styled from 'styled-components';
 import JoinInput from '../Elements/JoinInput';
 import { useState } from 'react';
-
-const handleEmailChange = (event) => {
-    setEmail(event.target.value);
-};
-
-const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-};
-
-const handlePasswordConfirmChange = (event) => {
-    setPasswordConfirm(event.target.value);
-};
+import useAuth from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const Join = () => {
+    const { joinUp } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirm, setPasswordConfirm] = useState('');
+    const [newUser, setNewUser] = useState(null);
+    const navigate = useNavigate();
+
+    const handleEmailChange = (event) => {
+        setEmail(event.target.value);
+    };
+
+    const handlePasswordChange = (event) => {
+        setPassword(event.target.value);
+    };
+
+    const handlePasswordConfirmChange = (event) => {
+        setPasswordConfirm(event.target.value);
+    };
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -41,7 +46,10 @@ const Join = () => {
             alert('비밀번호가 일치하지 않습니다.');
             return;
         }
-        alert(`회원가입 성공! 당신의 이메일은 ${email} & 비밀번호는 ${password}입니다.`);
+        alert(`회원가입 성공!`);
+        const authObj = { email: email, password: password, displayName: email.split('@')[0] };
+        joinUp(authObj);
+        navigate('/');
     };
 
     return (
