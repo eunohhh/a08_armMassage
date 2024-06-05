@@ -1,18 +1,25 @@
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const removeImgTags = (htmlString) => {
     return htmlString.replace(/<img[^>]*>/gi, '');
 };
 const MyWritingList = ({ blog }) => {
+    const navigate = useNavigate();
     const dateFormat = (date) => date.slice(0, 10);
+
+    const onClickDetail = () => {
+        console.log('개별 글 페이지로 이동');
+        navigate(`/detail/${blog.id}`, { state: { blog } });
+    };
 
     return (
         <StyledLi>
             <StyledPostContainer>
-                <StyledImage src={blog.image} alt="Post Image" />
+                <StyledImage onClick={onClickDetail} src={`${blog.image}`} alt="Post title Image" />
 
                 <StyledContent>
-                    <StyledTitle>{blog.title}</StyledTitle>
+                    <StyledTitle onClick={onClickDetail}>{blog.title}</StyledTitle>
                     <StyledText dangerouslySetInnerHTML={{ __html: removeImgTags(blog.contents) }}></StyledText>
                     <StyledDate>{dateFormat(blog.created_at)}</StyledDate>
                     <StyledLikes>❤️ {blog.likes}</StyledLikes>
@@ -36,7 +43,7 @@ const StyledPostContainer = styled.div`
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
     overflow: hidden;
     margin-bottom: 10rem;
-    width: 60%;
+    width: 100%;
     height: 50rem;
     border-bottom: 1px solid #d3d3d3;
 `;
@@ -48,11 +55,13 @@ const StyledImage = styled.div`
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    cursor: pointer;
 `;
 
 const StyledContent = styled.div`
     /* flex: 1; */
     /* padding: 50px; */
+    margin-top: 30px;
     height: 60%;
 `;
 
@@ -67,6 +76,7 @@ const StyledTitle = styled.h2`
     text-overflow: ellipsis;
     white-space: nowrap;
     height: 25%;
+    cursor: pointer;
 `;
 
 const StyledText = styled.p`
