@@ -28,7 +28,7 @@ const Header = () => {
 
     const onclickProfile = () => {
         console.log('프로필 페이지 이동');
-        navigate('/my');
+        navigate('/myHome');
     };
 
     const onClickWrite = () => {

@@ -16,15 +16,15 @@ const Card = ({ blog }) => {
 
     const onClickProfile = () => {
         console.log('개별 프로필로 이동');
-        navigate('/my');
+        navigate(`/mylist/${blog.id}`, { state: { email: blog.user_id } });
     };
 
     const dateFormat = (date) => date.slice(0, 10);
 
-    const idFormat = (id) => {
-        const email = id.split('@');
-        return email[0];
-    };
+    // const idFormat = (id) => {
+    //     const email = id.split('@');
+    //     return email[0];
+    // };
 
     return (
         <StyledLi>
@@ -43,7 +43,7 @@ const Card = ({ blog }) => {
                 <StyledInfo>
                     <StyledProfile onClick={onClickProfile}>
                         <StyledProfilePic src={blog.profilePic} alt="Profile 이미지 사진" />
-                        <StyledWriter>{idFormat(blog.user_id)}</StyledWriter>
+                        <StyledWriter>{blog.nick_name}</StyledWriter>
                     </StyledProfile>
                     <StyledLikesContainer>
                         <StyledLikes>❤️ {blog.likes}</StyledLikes>
@@ -55,6 +55,8 @@ const Card = ({ blog }) => {
 };
 
 const StyledLi = styled.li`
+    display: flex;
+    justify-content: center;
     width: 100%;
 `;
 

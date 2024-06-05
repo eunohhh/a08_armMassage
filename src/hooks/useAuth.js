@@ -13,13 +13,14 @@ import {
 
 const useAuth = () => {
     const dispatch = useDispatch();
-    const { user, session, loading, error, isLoggedIn } = useSelector(
+    const { user, session, loading, error, isLoggedIn, userInfo } = useSelector(
         (state) => ({
             user: state.auth.user,
             session: state.auth.session,
             loading: state.auth.loading,
             error: state.auth.error,
-            isLoggedIn: state.auth.isLoggedIn
+            isLoggedIn: state.auth.isLoggedIn,
+            userInfo: state.auth.userInfo
         }),
         shallowEqual
     );
@@ -28,14 +29,15 @@ const useAuth = () => {
 
     useEffect(() => {
         dispatch(checkSignIn());
+        dispatch(getUserInfo());
     }, [dispatch]);
 
     const logIn = (logInData) => dispatch(signIn(logInData)).then(() => dispatch(checkSignIn()));
     const logOut = () => dispatch(signOut());
-    const joinUp = (logInData) => dispatch(signUp(logInData));
+    const joinUp = (logInData) => dispatch(signUp(logInData)).then(() => dispatch(checkSignIn()));
     const logInWithGithub = (prevLocation) => dispatch(signInWithGithub(prevLocation));
     // pickUpdate = { file, email }
-    const upProfile = (picUpdate) => dispatch(updateProfile(picUpdate));
+    const upProfile = (picUpdate) => dispatch(updateProfile(picUpdate)).then(() => dispatch(checkSignIn()));
     // nickUpdate = { nickName, email }
     const upNickName = (nickUpdate) => dispatch(updateNickname(nickUpdate));
     const getUser = () => dispatch(getUserInfo());
@@ -46,6 +48,7 @@ const useAuth = () => {
         loading,
         error,
         isLoggedIn,
+        userInfo,
         logIn,
         logOut,
         joinUp,

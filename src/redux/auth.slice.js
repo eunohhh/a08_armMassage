@@ -68,7 +68,7 @@ export const signInWithGithub = createAsyncThunk('auth/signInWithGithub', async 
 
 // 회원가입
 export const signUp = createAsyncThunk('auth/signUp', async ({ email, password, displayName }, { rejectWithValue }) => {
-    const { user, error } = await supabase.auth.signUp({
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -78,15 +78,12 @@ export const signUp = createAsyncThunk('auth/signUp', async ({ email, password, 
         }
     });
 
-    if (error) {
-        console.log('error => ', error);
+    if (signUpError) {
+        console.log('error => ', signUpError);
         return rejectWithValue('auth 로그인 에러');
     }
 
-    // 여기에
-    // user info 테이블에 nickname 추가
-    // 블로그에서도 가져와서 객체에 추가하는 로직 추가
-    return user;
+    return signUpData.user;
 });
 
 // 그냥 로그인
