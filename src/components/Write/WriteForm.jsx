@@ -1,5 +1,6 @@
 import useAuth from '@/hooks/useAuth';
 import useBlogs from '@/hooks/useBlogs';
+import base64ToFile from '@/utils/base64ToFile';
 import uploadFilesAndReplaceImageSrc from '@/utils/uploadFilesAndReplaceImageSrc';
 import { useRef, useState } from 'react';
 import 'react-quill/dist/quill.snow.css';
@@ -7,7 +8,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from '../Elements/Button';
 import Editor from './Editor';
-// import supabase from '@/supabase/supabaseClient';
 
 function WriteForm() {
     const location = useLocation();
@@ -17,10 +17,9 @@ function WriteForm() {
     const { user } = useAuth();
     const { addBlogs, upBlogs } = useBlogs();
     const [contents, setContents] = useState(blog ? blog.contents : null);
-    const [files, setFiles] = useState([]);
     const [title, setTitle] = useState(blog ? blog.title : '');
 
-    // console.log(files);
+    console.log(user);
 
     const quillRef = useRef();
 
@@ -35,6 +34,19 @@ function WriteForm() {
 
         if (!title || !contents) return alert('내용부터 입력 해야지 에휴...');
 
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = contents;
+        const imgTags = tempDiv.getElementsByTagName('img');
+
+        const filePromises = [...imgTags].map(async (imgTag, index) => {
+            const base64String = imgTag.src;
+            const fileName = `image_${index}.jpg`; // 이미지 파일명 임시...
+            return await base64ToFile(base64String, fileName);
+        });
+
+        // 모든 프로미스를 해결하여 파일 객체 배열을 반환합니다.
+        const files = await Promise.all(filePromises);
+
         const updatedContents = await uploadFilesAndReplaceImageSrc(files, contents);
 
         // blog 가 트루면 즉 업데이트면
@@ -45,14 +57,14 @@ function WriteForm() {
 
             const imgSrcToUpdate = imgTags && imgTags.length > 0 ? imgTags[0].src : null;
 
-            console.log(files);
             const temp = {
                 newBlog: {
                     id: blog.id,
                     title: title,
                     contents: updatedContents,
                     created_at: new Date().toISOString(),
-                    user_id: user.email
+                    user_id: user.email,
+                    nick_name: user.nickName
                 },
                 file: files.length > 0 && files[0].size > 0 ? files[0] : imgSrcToUpdate
             };
@@ -64,7 +76,8 @@ function WriteForm() {
                     title: title,
                     contents: updatedContents,
                     created_at: new Date().toISOString(),
-                    user_id: user.email
+                    user_id: user.email,
+                    nick_name: user.nickName
                 },
                 file: files[0].size > 0 ? files[0] : null
             };
@@ -84,7 +97,7 @@ function WriteForm() {
                 value={title}
                 onChange={handleChange}
             ></StyledInput>
-            <Editor ref={quillRef} onTextChange={setContents} setFiles={setFiles} blog={blog} />
+            <Editor ref={quillRef} onTextChange={setContents} blog={blog} />
             <StyledDiv>
                 <Button buttonText={'돌아가기'} color={'#a055ff'} type={'button'} onClick={() => navigate('/')} />
                 <Button buttonText={blog ? '수정하기' : '출간하기'} color={'#a055ff'} type={'submit'} />

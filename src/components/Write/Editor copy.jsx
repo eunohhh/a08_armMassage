@@ -3,7 +3,7 @@ import Quill from 'quill';
 import { forwardRef, useEffect, useLayoutEffect, useRef } from 'react';
 
 // 이미지 처리를 하는 핸들러
-const imageHandler = (quill, onTextChangeRef) => {
+const imageHandler = (quill, setFiles, onTextChangeRef) => {
     console.log('에디터에서 이미지 버튼을 클릭하면 이 핸들러가 시작됩니다!');
 
     // 1. 이미지를 저장할 input type=file DOM을 만든다.
@@ -17,6 +17,7 @@ const imageHandler = (quill, onTextChangeRef) => {
     // input에 변화가 생긴다면 = 이미지를 선택
     input.addEventListener('change', async () => {
         const file = input.files[0];
+        setFiles((prev) => [...prev, file]);
         const formData = new FormData();
         formData.append('img', file); // formData는 키-밸류 구조
         try {
@@ -91,11 +92,11 @@ const Editor = forwardRef(({ onTextChange, setFiles, blog }, ref) => {
         }
 
         //oldDelta, source
-        quill.on(Quill.events.TEXT_CHANGE, (delta) => {
-            // let currrentContents = quill.getContents();
-            // console.log(currrentContents.diff(oldContents));
-            // console.log(oldContents.diff(currrentContents));
-            // console.log(delta);
+        quill.on(Quill.events.TEXT_CHANGE, (delta, oldContents) => {
+            let currrentContents = quill.getContents();
+            console.log(currrentContents.diff(oldContents));
+            console.log(oldContents.diff(currrentContents));
+            console.log(delta);
             // Check if an image was added
             const hasImage = delta.ops.some((op) => op.insert && op.insert.image);
             if (hasImage) {
