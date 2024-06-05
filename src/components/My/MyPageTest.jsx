@@ -20,8 +20,6 @@ function MyPageTest() {
             try {
                 const convertedImg = await resizeAndConvertImage(file);
                 const base64 = await getDataUrl(file);
-
-                console.log(convertedImg);
                 setProfileImage(base64);
                 setImgFile(convertedImg);
             } catch (error) {

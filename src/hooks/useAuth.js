@@ -35,7 +35,7 @@ const useAuth = () => {
     const joinUp = (logInData) => dispatch(signUp(logInData)).then(() => dispatch(checkSignIn()));
     const logInWithGithub = (prevLocation) => dispatch(signInWithGithub(prevLocation));
     // pickUpdate = { file, email }
-    const upProfile = (picUpdate) => dispatch(updateProfile(picUpdate));
+    const upProfile = (picUpdate) => dispatch(updateProfile(picUpdate)).then(() => dispatch(checkSignIn()));
     // nickUpdate = { nickName, email }
     const upNickName = (nickUpdate) => dispatch(updateNickname(nickUpdate));
     const getUser = () => dispatch(getUserInfo());

@@ -21,10 +21,10 @@ const Card = ({ blog }) => {
 
     const dateFormat = (date) => date.slice(0, 10);
 
-    const idFormat = (id) => {
-        const email = id.split('@');
-        return email[0];
-    };
+    // const idFormat = (id) => {
+    //     const email = id.split('@');
+    //     return email[0];
+    // };
 
     return (
         <StyledLi>
@@ -43,7 +43,7 @@ const Card = ({ blog }) => {
                 <StyledInfo>
                     <StyledProfile onClick={onClickProfile}>
                         <StyledProfilePic src={blog.profilePic} alt="Profile 이미지 사진" />
-                        <StyledWriter>{idFormat(blog.user_id)}</StyledWriter>
+                        <StyledWriter>{blog.nick_name}</StyledWriter>
                     </StyledProfile>
                     <StyledLikesContainer>
                         <StyledLikes>❤️ {blog.likes}</StyledLikes>
