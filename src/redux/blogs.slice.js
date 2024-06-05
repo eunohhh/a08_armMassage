@@ -6,7 +6,7 @@ export const BASE_IMG_URL = 'https://ageijospngqmyzptvsoo.supabase.co/storage/v1
 // createAsyncThunk : 리덕스가 비동기 통신할 때 쓰는 친구
 // read
 export const getBlogs = createAsyncThunk('blogs/getBlogs', async (_, { rejectWithValue }) => {
-    const { data, error } = await supabase.from('blogs').select('*');
+    const { data, error } = await supabase.from('blogs').select('*').order('created_at', { ascending: false });
 
     if (error) {
         console.log('error => ', error);

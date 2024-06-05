@@ -14,11 +14,12 @@ const Header = () => {
 
     useEffect(() => {
         if (user) {
-            if (user?.app_metadata?.provider === 'email') {
-                setProfilePic(user.profile);
-            } else {
-                setProfilePic(user.identities[0].identity_data.avatar_url);
-            }
+            // if (user?.app_metadata?.provider === 'email') {
+            //     setProfilePic(user.profile);
+            // } else {
+            //     setProfilePic(user.identities[0].identity_data.avatar_url);
+            // }
+            setProfilePic(user.profile);
             setUserId(user.id);
         }
     }, [user]);
@@ -52,9 +53,13 @@ const Header = () => {
     return (
         <StyledHeader>
             <StyledHeaderInner>
-                <StyledLogo onClick={onclickLogo} alt="메인페이지 로고 이미지">
-                    Logo
-                </StyledLogo>
+                <StyledHeaderBox1>
+                    <StyledLogo onClick={onclickLogo} alt="메인페이지 로고 이미지">
+                        <StyledImg src="/logo.webp" alt="sitelogo" />
+                    </StyledLogo>
+                    <StyledSpan>{'A08 팔좀주물러조'}</StyledSpan>
+                </StyledHeaderBox1>
+
                 <StyledLoginArea>
                     {user ? (
                         <StyledLogin>
@@ -74,29 +79,55 @@ const Header = () => {
 };
 
 const StyledHeader = styled.header`
-    background-color: #3f3f3f;
+    background-color: #e7e6e6;
+    display: flex;
     color: #fff;
     padding: 1rem;
     box-sizing: border-box;
     height: 72px;
 `;
 
+const StyledHeaderBox1 = styled.div`
+    position: relative;
+    width: 25%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+`;
+
+const StyledSpan = styled.span`
+    color: #220d3e;
+    font-size: 1.5rem;
+`;
+
 const StyledHeaderInner = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1600px;
-    margin: 0 auto;
+    width: 100%;
 `;
 
 const StyledLogo = styled.div`
+    position: relative;
+    width: 4rem;
+    height: auto;
     font-size: 1.5rem;
     font-weight: bold;
     cursor: pointer;
 `;
 
+const StyledImg = styled.img`
+    position: relative;
+    width: 100%;
+    height: auto;
+`;
+
 const StyledLoginArea = styled.div`
+    position: relative;
+    width: 75%;
     display: flex;
+    justify-content: flex-end;
     align-items: center;
 `;
 

@@ -9,10 +9,11 @@ import MyWritingList from '../List/MyWritingList';
 const MyList = () => {
     const navigate = useNavigate();
     const { blogs } = useBlogs();
-    const { userInfo } = useAuth();
+    const { user, userInfo } = useAuth();
     const location = useLocation();
     const { email } = location.state;
     const [matchedUser, setMatchedUser] = useState(null);
+    const [isCurrentLoggedInUser, setIsCurrentLoggedInUser] = useState(false);
 
     // console.log(matchedUser);
     // console.log(blogs);
@@ -21,8 +22,6 @@ const MyList = () => {
         navigate('/my');
     };
 
-    // const matchedUser = userInfo.find((user) => user.email === email);
-    // console.log(userInfo);
     const filteredBlogs = blogs.filter((blog) => blog.user_id === email);
     useEffect(() => {
         if (userInfo) {
@@ -31,6 +30,14 @@ const MyList = () => {
         }
     }, [userInfo, email]);
 
+    useEffect(() => {
+        if (user) {
+            if (user.email === email) {
+                setIsCurrentLoggedInUser(true);
+            }
+        }
+    }, [user, email]);
+
     return (
         <StyledSection>
             <StyledProfile>
@@ -38,14 +45,16 @@ const MyList = () => {
                 <StyledProfileBox>
                     <StyledProfileName>{matchedUser && matchedUser.username}</StyledProfileName>
 
-                    <StyledButton>
-                        <Button
-                            type="button"
-                            buttonText="프로필 수정 (조건문으로안보이게)"
-                            onClick={onClickProfile}
-                            color="#a055ff"
-                        ></Button>
-                    </StyledButton>
+                    {isCurrentLoggedInUser && (
+                        <StyledButton>
+                            <Button
+                                type="button"
+                                buttonText="프로필 수정하기"
+                                onClick={onClickProfile}
+                                color="#a055ff"
+                            ></Button>
+                        </StyledButton>
+                    )}
                 </StyledProfileBox>
             </StyledProfile>
             <StyledUl>
