@@ -6,8 +6,6 @@ import Card from '../List/Card';
 const Main = () => {
     const { blogs } = useBlogs();
 
-    console.log(blogs);
-
     //blog.contents.match(/<p>(.*?)<\/p>/)?.[1]
     return (
         <StyledSection>

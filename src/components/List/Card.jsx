@@ -55,6 +55,8 @@ const Card = ({ blog }) => {
 };
 
 const StyledLi = styled.li`
+    display: flex;
+    justify-content: center;
     width: 100%;
 `;
 

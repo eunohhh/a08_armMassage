@@ -7,6 +7,7 @@ import JoinPage from '../pages/JoinPage';
 import PersonalPage from '../pages/PersonalPage';
 import WritePage from '../pages/WritePage';
 import ProtectedRoute from './ProtectedRoute';
+import MyHomePage from '@/pages/MyHomePage';
 
 // / 메인 인수님
 // /join 지훈님
@@ -31,7 +32,7 @@ const Router = () => {
                         <Route path="/detail">
                             <Route path=":id" element={<DetailPage />} />
                         </Route>
-
+                        <Route path="/myHome" element={<MyHomePage />} />
                     </Routes>
                 </Layout>
             </ModalProvider>
