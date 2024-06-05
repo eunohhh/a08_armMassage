@@ -16,7 +16,7 @@ const MyWritingList = ({ blog }) => {
     return (
         <StyledLi>
             <StyledPostContainer>
-                <StyledImage onClick={onClickDetail} src={`${blog.image}`} alt="Post title Image" />
+                <StyledImage onClick={onClickDetail} $src={`${blog.image}`} alt="Post title Image" />
 
                 <StyledContent>
                     <StyledTitle onClick={onClickDetail}>{blog.title}</StyledTitle>
@@ -51,7 +51,7 @@ const StyledPostContainer = styled.div`
 const StyledImage = styled.div`
     width: 100%;
     height: 100%;
-    background-image: url(${(props) => props.src});
+    background-image: url(${(props) => "'" + props.$src + "'"});
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

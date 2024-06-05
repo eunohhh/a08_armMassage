@@ -44,6 +44,7 @@ const MyList = () => {
                 <StyledProfilePic src={matchedUser && matchedUser.profile_image} alt="Profile 이미지 사진" />
                 <StyledProfileBox>
                     <StyledProfileName>{matchedUser && matchedUser.username}</StyledProfileName>
+
                     {isCurrentLoggedInUser && (
                         <StyledButton>
                             <Button
@@ -69,6 +70,7 @@ const StyledSection = styled.section`
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    width: 1000px;
 `;
 
 const StyledProfile = styled.div`
