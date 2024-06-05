@@ -22,7 +22,7 @@ const MyList = () => {
     };
 
     // const matchedUser = userInfo.find((user) => user.email === email);
-    // console.log(matchedUser);
+    // console.log(userInfo);
     const filteredBlogs = blogs.filter((blog) => blog.user_id === email);
     useEffect(() => {
         if (userInfo) {
@@ -37,6 +37,7 @@ const MyList = () => {
                 <StyledProfilePic src={matchedUser && matchedUser.profile_image} alt="Profile 이미지 사진" />
                 <StyledProfileBox>
                     <StyledProfileName>{matchedUser && matchedUser.username}</StyledProfileName>
+
                     <StyledButton>
                         <Button
                             type="button"
@@ -60,6 +61,7 @@ const StyledSection = styled.section`
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    width: 1000px;
 `;
 
 const StyledProfile = styled.div`
