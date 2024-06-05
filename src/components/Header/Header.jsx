@@ -57,7 +57,7 @@ const Header = () => {
                     <StyledLogo onClick={onclickLogo} alt="메인페이지 로고 이미지">
                         <StyledImg src="/logo.webp" alt="sitelogo" />
                     </StyledLogo>
-                    <StyledSpan>털쟁이들</StyledSpan>
+                    <StyledSpan>{'A08 팔좀주물러조'}</StyledSpan>
                 </StyledHeaderBox1>
 
                 <StyledLoginArea>
@@ -89,7 +89,7 @@ const StyledHeader = styled.header`
 
 const StyledHeaderBox1 = styled.div`
     position: relative;
-    width: 15%;
+    width: 25%;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -125,7 +125,7 @@ const StyledImg = styled.img`
 
 const StyledLoginArea = styled.div`
     position: relative;
-    width: 85%;
+    width: 75%;
     display: flex;
     justify-content: flex-end;
     align-items: center;
