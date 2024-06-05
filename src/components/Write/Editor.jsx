@@ -93,6 +93,7 @@ const Editor = forwardRef(({ onTextChange, setFiles, blog }, ref) => {
 
         //oldDelta, source
         quill.on(Quill.events.TEXT_CHANGE, (delta) => {
+            console.log(delta.ops);
             // Check if an image was added
             const hasImage = delta.ops.some((op) => op.insert && op.insert.image);
             if (hasImage) {

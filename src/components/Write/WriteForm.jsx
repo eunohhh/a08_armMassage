@@ -20,6 +20,8 @@ function WriteForm() {
     const [files, setFiles] = useState([]);
     const [title, setTitle] = useState(blog ? blog.title : '');
 
+    // console.log(files);
+
     const quillRef = useRef();
 
     const handleChange = (e) => {
