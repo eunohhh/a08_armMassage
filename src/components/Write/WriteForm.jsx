@@ -19,7 +19,7 @@ function WriteForm() {
     const [contents, setContents] = useState(blog ? blog.contents : null);
     const [title, setTitle] = useState(blog ? blog.title : '');
 
-    console.log(user);
+    // console.log(user);
 
     const quillRef = useRef();
 
@@ -30,9 +30,13 @@ function WriteForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!user) return alert('글 쓰고 싶으면 좋은 말 할 때 로그인 해');
+        if (!user) return alert('로그인이 필요합니다!');
 
-        if (!title || !contents) return alert('내용부터 입력 해야지 에휴...');
+        if (!title || !contents) return alert('내용이 입력되지 않았습니다!');
+
+        const yes = confirm('글을 수정하시겠습니까?');
+
+        if (!yes) return;
 
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = contents;

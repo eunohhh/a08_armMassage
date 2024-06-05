@@ -2,7 +2,7 @@ import useAuth from '@/hooks/useAuth';
 import useBlogs from '@/hooks/useBlogs';
 import DOMPurify from 'dompurify';
 import parse, { domToReact } from 'html-react-parser';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from '../Elements/Button';
@@ -14,10 +14,23 @@ const regex = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))/g;
 // 이미지는 12:9 비율
 function Detail() {
     const { user } = useAuth();
-    const { blogs } = useBlogs();
+    const { blogs, delBlogs } = useBlogs();
     const navigate = useNavigate();
-
     const params = useParams();
+    const [isCurrentLoggedInUser, setIsCurrentLoggedInUser] = useState(false);
+
+    const handleDeleteButtonClick = (blogId) => (e) => {
+        e.preventDefault();
+
+        const yes = confirm('정말 삭제하시겠습니까?');
+
+        if (yes) {
+            delBlogs(blogId);
+            navigate('/');
+        } else {
+            return;
+        }
+    };
 
     const blog = useMemo(() => blogs.find((blog) => blog.id === params.id), [blogs, params.id]);
 
@@ -57,6 +70,14 @@ function Detail() {
         return domToReact(node.children || [], { replace: replaceImgTag });
     };
 
+    useEffect(() => {
+        if (user) {
+            if (user.email === blog.user_id) {
+                setIsCurrentLoggedInUser(true);
+            }
+        }
+    }, [user, blog]);
+
     if (!blog) {
         return <div>Blog not found</div>; // 해당 블로그를 찾을 수 없을 때
     }
@@ -73,8 +94,14 @@ function Detail() {
 
             {parse(cleanHTML, { replace: replaceImgTag })}
 
-            {user && (
+            {isCurrentLoggedInUser && (
                 <StyledDiv>
+                    <Button
+                        buttonText={'삭제하기'}
+                        color={'#a055ff'}
+                        type={'button'}
+                        onClick={handleDeleteButtonClick(blog.id)}
+                    />
                     <Button
                         buttonText={'수정하기'}
                         color={'#a055ff'}
@@ -127,6 +154,7 @@ const StyledDiv = styled.div`
     position: relative;
     display: flex;
     justify-content: flex-end;
+    gap: 1rem;
 `;
 
 // const StyledSpan = styled.span`

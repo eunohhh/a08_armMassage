@@ -1,5 +1,5 @@
-import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 const removeImgTags = (htmlString) => {
     return htmlString.replace(/<img[^>]*>/gi, '');
@@ -52,7 +52,7 @@ const StyledImage = styled.div`
     width: 100%;
     height: 100%;
     background-image: url(${(props) => "'" + props.$src + "'"});
-    background-size: cover;
+    background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
     cursor: pointer;

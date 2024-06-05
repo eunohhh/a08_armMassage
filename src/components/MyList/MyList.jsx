@@ -49,7 +49,7 @@ const MyList = () => {
                         <StyledButton>
                             <Button
                                 type="button"
-                                buttonText="프로필 수정 (조건문으로안보이게)"
+                                buttonText="프로필 수정하기"
                                 onClick={onClickProfile}
                                 color="#a055ff"
                             ></Button>
