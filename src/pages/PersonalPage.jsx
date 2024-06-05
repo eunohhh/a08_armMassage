@@ -1,8 +1,8 @@
 // import MyPage from '@/components/My/MyPage';
-import MyPageTest from '@/components/My/MyPageTest';
+import MyPage from '@/components/My/MyPage';
 
 function PersonalPage() {
-    return <MyPageTest />;
+    return <MyPage />;
 }
 
 export default PersonalPage;

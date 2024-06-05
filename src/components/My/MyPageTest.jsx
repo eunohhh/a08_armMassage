@@ -4,6 +4,7 @@ import resizeAndConvertImage from '@/utils/resizeAndConvertImg';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import Button from '../Elements/Button';
 
 function MyPageTest() {
     const { user, upProfile, upNickName } = useAuth();
@@ -81,9 +82,12 @@ function MyPageTest() {
                         alt="profile image"
                     />
                 </ImageBox>
-                <StyledButton color="#a055ff" onClick={() => document.getElementById('fileInput').click()}>
-                    이미지 변경하기
-                </StyledButton>
+                <Button
+                    buttonText={'이미지 변경하기'}
+                    color={'#a055ff'}
+                    type={'button'}
+                    onClick={() => document.getElementById('fileInput').click()}
+                />
                 <input
                     id="fileInput"
                     type="file"
@@ -97,12 +101,8 @@ function MyPageTest() {
                 <br />
                 <Input value={profileName} placeholder={user && user.nickName} onChange={handleNameChange} />
                 <Buttons>
-                    <StyledButton color="#a055ff" onClick={handleSubmit}>
-                        저장
-                    </StyledButton>
-                    <StyledButton color="#a055ff" onClick={handleBackClick}>
-                        돌아가기
-                    </StyledButton>
+                    <Button buttonText={'저장'} type={'button'} color="#a055ff" onClick={handleSubmit} />
+                    <Button buttonText={'돌아가기'} type={'button'} color="#a055ff" onClick={handleBackClick} />
                 </Buttons>
             </RightDiv>
         </Section>
@@ -156,23 +156,6 @@ const Input = styled.input`
 const Buttons = styled.div`
     display: flex;
     gap: 10px;
-`;
-
-const StyledButton = styled.button`
-    padding: 8px 20px;
-    height: 34px;
-    margin-top: 10px;
-    background-color: ${(props) => props.color};
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out 0s;
-    &:hover {
-        background-color: #d2d2d2;
-        color: #3f3f3f;
-    }
 `;
 
 export default MyPageTest;
