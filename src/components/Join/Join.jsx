@@ -1,8 +1,7 @@
-import React from 'react';
-import styled from 'styled-components';
-import { useState } from 'react';
 import useAuth from '@/hooks/useAuth';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 import Button from '../Elements/Button';
 import InputField from '../Elements/InputField';
 
@@ -14,7 +13,7 @@ const Join = () => {
     const navigate = useNavigate();
 
     //이메일 정규식
-    const emailRegEx = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/gi;
+    const emailRegEx = /^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/gi;
 
     // const emailCheck = (email) => {
     //     return emailRegEx.test(email); //형식에 맞을 경우, true 리턴
@@ -32,7 +31,7 @@ const Join = () => {
         setPasswordConfirm(event.target.value);
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         if (!emailRegEx.test(email)) {
             alert('이메일 형식에 따라 정확히 입력해 주세요.');
@@ -53,10 +52,15 @@ const Join = () => {
             alert('비밀번호가 일치하지 않습니다.');
             return;
         }
-        alert(`회원가입 성공!`);
         const authObj = { email: email, password: password, displayName: email.split('@')[0] };
-        joinUp(authObj);
-        navigate('/');
+
+        try {
+            await joinUp(authObj).unwrap();
+            alert(`회원가입 성공!`);
+            navigate('/');
+        } catch (error) {
+            alert(error);
+        }
     };
 
     return (

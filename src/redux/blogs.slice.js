@@ -207,7 +207,8 @@ export const updateLikes = createAsyncThunk('blogs/addLikes', async (ids, { reje
 
         // 이미 좋아요를 누른 경우
         if (existingLike) {
-            return { blog_id: ids.blogId, user_id: ids.userId, message: '이미 좋아요를 눌렀습니다' };
+            return rejectWithValue({ blog_id: ids.blogId, user_id: ids.userId, message: '이미 좋아요를 눌렀습니다' });
+            // return { blog_id: ids.blogId, user_id: ids.userId, message: '이미 좋아요를 눌렀습니다' };
         }
 
         const { data, error } = await supabase
@@ -216,16 +217,20 @@ export const updateLikes = createAsyncThunk('blogs/addLikes', async (ids, { reje
             .select()
             .single();
 
-        if (error && error.code === '23505') {
+        if (error) {
             // 23505는 PostgreSQL의 unique constraint violation error 코드입니다.
             // 이미 좋아요가 존재하는 경우
-            return { blog_id: ids.blogId, user_id: ids.userId, message: '이미 좋아요를 눌렀습니다' };
+            if (error.code === '23505') {
+                return rejectWithValue({
+                    blog_id: ids.blogId,
+                    user_id: ids.userId,
+                    message: '이미 좋아요를 눌렀습니다'
+                });
+            }
+            console.log('fetch error => ', error);
+            return rejectWithValue({ blog_id: ids.blogId, user_id: ids.userId, message: '이미 좋아요를 눌렀습니다' });
         }
 
-        if (error) {
-            console.log('fetch error => ', error);
-            return rejectWithValue('현재 좋아요 수 업데이트 실패했습니다');
-        }
         return data;
     } catch (err) {
         console.log('unexpected error => ', err);
@@ -349,7 +354,7 @@ const blogSlice = createSlice({
             })
             .addCase(updateLikes.rejected, (prevState, action) => {
                 prevState.blogLoading = false;
-                prevState.blogError = action.error.message;
+                prevState.blogError = action.payload;
             })
             .addCase(updateLikes.fulfilled, (prevState, action) => {
                 prevState.blogLoading = false;

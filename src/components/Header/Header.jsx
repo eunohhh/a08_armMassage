@@ -14,11 +14,6 @@ const Header = () => {
 
     useEffect(() => {
         if (user) {
-            // if (user?.app_metadata?.provider === 'email') {
-            //     setProfilePic(user.profile);
-            // } else {
-            //     setProfilePic(user.identities[0].identity_data.avatar_url);
-            // }
             setProfilePic(user.profile);
             setUserId(user.id);
         }
@@ -145,3 +140,9 @@ const StyledProfilePic = styled.img`
 `;
 
 export default Header;
+
+// if (user?.app_metadata?.provider === 'email') {
+//     setProfilePic(user.profile);
+// } else {
+//     setProfilePic(user.identities[0].identity_data.avatar_url);
+// }
