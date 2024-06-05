@@ -10,6 +10,7 @@ const Header = () => {
     const [profilePic, setProfilePic] = useState('');
     const navigate = useNavigate();
     const modal = useModal();
+    const [userId, setUserId] = useState(null);
 
     useEffect(() => {
         if (user) {
@@ -18,6 +19,7 @@ const Header = () => {
             } else {
                 setProfilePic(user.identities[0].identity_data.avatar_url);
             }
+            setUserId(user.id);
         }
     }, [user]);
 
@@ -27,8 +29,8 @@ const Header = () => {
     };
 
     const onclickProfile = () => {
-        console.log('프로필 페이지 이동');
-        navigate('/myHome');
+        console.log('마이 리스트 페이지 이동');
+        navigate(`/mylist/${userId}`, { state: { email: user.email } });
     };
 
     const onClickWrite = () => {

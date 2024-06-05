@@ -1,10 +1,10 @@
-import useBlogs from '../../hooks/useBlogs';
-import MyWritingList from '../List/MyWritingList';
-import styled from 'styled-components';
-import Button from '../Elements/Button';
-import { useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '@/hooks/useAuth';
 import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import useBlogs from '../../hooks/useBlogs';
+import Button from '../Elements/Button';
+import MyWritingList from '../List/MyWritingList';
 
 const MyList = () => {
     const navigate = useNavigate();
@@ -29,7 +29,7 @@ const MyList = () => {
             const matchedUser = userInfo.find((user) => user.email === email);
             setMatchedUser(matchedUser);
         }
-    }, [userInfo]);
+    }, [userInfo, email]);
 
     return (
         <StyledSection>
