@@ -30,7 +30,7 @@ const useAuth = () => {
         dispatch(checkSignIn());
     }, [dispatch]);
 
-    const logIn = (logInData) => dispatch(signIn(logInData));
+    const logIn = (logInData) => dispatch(signIn(logInData)).then(() => dispatch(checkSignIn()));
     const logOut = () => dispatch(signOut());
     const joinUp = (logInData) => dispatch(signUp(logInData));
     const logInWithGithub = (prevLocation) => dispatch(signInWithGithub(prevLocation));

@@ -129,12 +129,32 @@ export const signOut = createAsyncThunk('auth/signOut', async (_, { rejectWithVa
     }
 });
 
-// 로그인 상태 체크
-export const checkSignIn = createAsyncThunk('auth/checkSignIn', async () => {
+// 로그인 상태 체크 및 기본 정보 가져오기
+export const checkSignIn = createAsyncThunk('auth/checkSignIn', async (_, { rejectWithValue }) => {
     const { data, error } = await supabase.auth.getSession();
     if (error) {
         throw new Error('Failed to fetch user');
     }
+
+    if (!data.session) return rejectWithValue('세션데이터 없으므로 로그인체크 로직 종료');
+
+    const { data: profileData, error: profileError } = await supabase
+        .from('userinfo')
+        .select('profile_image, username')
+        .eq('id', data?.session?.user?.id)
+        .single();
+
+    if (profileError) {
+        console.log('error => ', error);
+        return rejectWithValue('가져오기 실패했다');
+    }
+
+    if (!profileData) {
+        return rejectWithValue('데이터 없다');
+    }
+
+    data.session.user.profile = profileData.profile_image;
+    data.session.user.nickName = profileData.username;
 
     return {
         user: data.session.user,
@@ -184,11 +204,10 @@ export const updateNickname = createAsyncThunk('auth/updateNickname', async (nic
 export const updateProfile = createAsyncThunk('auth/updateProfile', async (picUpdate, { rejectWithValue }) => {
     let imgData, imgError;
 
+    const fileName = `${Date.now()}_${picUpdate.file.name}`;
     // 파일이 있는 경우에만 파일 업로드를 수행
     if (picUpdate.file !== null) {
-        const uploadResult = await supabase.storage
-            .from('blogs')
-            .upload(`${Date.now()}_${picUpdate.file.name}`, picUpdate.file);
+        const uploadResult = await supabase.storage.from('blogs').upload(fileName, picUpdate.file);
 
         imgData = uploadResult.data;
         imgError = uploadResult.error;
@@ -201,24 +220,24 @@ export const updateProfile = createAsyncThunk('auth/updateProfile', async (picUp
 
     console.log(imgData);
     // 업로드된 이미지의 URL 가져오기
-    const { publicURL } = supabase.storage.from('blogs').getPublicUrl(picUpdate.file.name);
+    const { data } = supabase.storage.from('blogs').getPublicUrl(fileName);
 
-    if (!publicURL) {
+    if (!data) {
         return rejectWithValue('업로드된 파일 URL을 가져올 수 없습니다.');
     }
 
     // userinfo 테이블에 profile_image 컬럼 업데이트
     const { error: updateError } = await supabase
         .from('userinfo')
-        .update({ profile_image: publicURL })
-        .eq('user_id', picUpdate.email);
+        .update({ profile_image: data.publicUrl })
+        .eq('email', picUpdate.email);
 
     if (updateError) {
         console.error('프로필 이미지 업데이트 에러:', updateError);
         return rejectWithValue('프로필 이미지 업데이트 에러');
     }
 
-    return publicURL;
+    return data.publicUrl;
 });
 
 // 유저정보 가져오기
@@ -341,8 +360,7 @@ const authSlice = createSlice({
             })
             .addCase(updateProfile.fulfilled, (state, action) => {
                 state.loading = false;
-                console.log(action.payload.profile_image);
-                state.user.profile = action.payload.profile_image;
+                state.user.profile = action.payload;
             })
             .addCase(updateProfile.rejected, (state, action) => {
                 state.loading = false;

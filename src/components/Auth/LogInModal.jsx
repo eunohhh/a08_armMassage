@@ -35,7 +35,9 @@ const LogInModal = () => {
 
         // 이부분 추가 : 잘못된 아이디로 로그인했을 경우
         try {
-            await logIn(authObject).unwrap();
+            // await logIn(authObject).unwrap();
+            logIn(authObject);
+
             modal.close();
         } catch (error) {
             console.log(error);
