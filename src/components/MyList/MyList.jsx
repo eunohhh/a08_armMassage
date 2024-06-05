@@ -15,8 +15,6 @@ const MyList = () => {
     const [matchedUser, setMatchedUser] = useState(null);
     const [isCurrentLoggedInUser, setIsCurrentLoggedInUser] = useState(false);
 
-    console.log(isCurrentLoggedInUser);
-
     // console.log(matchedUser);
     // console.log(blogs);
     const onClickProfile = () => {
@@ -24,8 +22,6 @@ const MyList = () => {
         navigate('/my');
     };
 
-    // const matchedUser = userInfo.find((user) => user.email === email);
-    // console.log(matchedUser);
     const filteredBlogs = blogs.filter((blog) => blog.user_id === email);
     useEffect(() => {
         if (userInfo) {
@@ -48,14 +44,16 @@ const MyList = () => {
                 <StyledProfilePic src={matchedUser && matchedUser.profile_image} alt="Profile 이미지 사진" />
                 <StyledProfileBox>
                     <StyledProfileName>{matchedUser && matchedUser.username}</StyledProfileName>
-                    <StyledButton>
-                        <Button
-                            type="button"
-                            buttonText="프로필 수정 (조건문으로안보이게)"
-                            onClick={onClickProfile}
-                            color="#a055ff"
-                        ></Button>
-                    </StyledButton>
+                    {isCurrentLoggedInUser && (
+                        <StyledButton>
+                            <Button
+                                type="button"
+                                buttonText="프로필 수정 (조건문으로안보이게)"
+                                onClick={onClickProfile}
+                                color="#a055ff"
+                            ></Button>
+                        </StyledButton>
+                    )}
                 </StyledProfileBox>
             </StyledProfile>
             <StyledUl>
