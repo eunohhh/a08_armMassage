@@ -1,6 +1,6 @@
 import { useModal } from '@/contexts/modal.context';
 import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import useAuth from '../../hooks/useAuth';
 import Backdrop from '../Elements/Backdrop';
@@ -13,9 +13,9 @@ const LogInModal = () => {
     const { logInWithGithub, logIn } = useAuth();
     const modal = useModal();
     const navigate = useNavigate();
-    const location = useLocation();
+    // const location = useLocation();
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
 
         const idType = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -33,12 +33,22 @@ const LogInModal = () => {
             password: password
         };
 
-        logIn(authObject);
-        modal.close();
+        // 이부분 추가 : 잘못된 아이디로 로그인했을 경우
+        try {
+            // await logIn(authObject).unwrap();
+            logIn(authObject);
+
+            modal.close();
+        } catch (error) {
+            console.log(error);
+            alert(error);
+        }
     };
-    const handleGithubClick = () => {
+    const handleGithubClick = (e) => {
+        e.preventDefault();
         modal.close();
-        logInWithGithub(location.pathname);
+        // logInWithGithub(location.pathname);
+        logInWithGithub();
     };
     const handleJoinPage = () => {
         navigate('/join');

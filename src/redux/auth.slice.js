@@ -2,23 +2,68 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import supabase from '../supabase/supabaseClient';
 
 // 깃헙 로그인
-export const signInWithGithub = createAsyncThunk('auth/signInWithGithub', async (prevLocation, { rejectWithValue }) => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'github',
-        options: {
-            redirectTo: `${window.location.origin}${prevLocation}` // 원하는 경로로 수정
-        }
-    });
+export const signInWithGithub = createAsyncThunk('auth/signInWithGithub', async (_, { rejectWithValue }) => {
+    try {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'github'
+        });
 
-    if (error) {
-        console.log('error => ', error);
-        return rejectWithValue('OAuth 로그인 에러');
+        if (error) {
+            console.error('OAuth 로그인 에러:', error);
+            return rejectWithValue('OAuth 로그인 에러');
+        }
+
+        if (!data) {
+            return rejectWithValue('로그인 실패?');
+        }
+
+        const user = data.user;
+
+        // user의 아바타 URL 가져오기
+        const avatarUrl = user?.identities?.[0]?.identity_data?.avatar_url;
+        if (!avatarUrl) {
+            return rejectWithValue('아바타 URL을 가져올 수 없습니다.');
+        }
+
+        // 아바타 이미지를 스토리지에 업로드
+        const fileName = `avatars/${user.id}.jpg`;
+        const response = await fetch(avatarUrl);
+        const blob = await response.blob();
+
+        const { error: storageError } = await supabase.storage.from('blogs').upload(fileName, blob, {
+            cacheControl: '3600',
+            upsert: true,
+            contentType: 'image/jpeg'
+        });
+
+        if (storageError) {
+            console.error('스토리지 업로드 에러:', storageError);
+            return rejectWithValue('스토리지 업로드 에러');
+        }
+
+        // 업로드된 이미지의 URL 가져오기
+        const { publicURL } = supabase.storage.from('blogs').getPublicUrl(fileName);
+
+        if (!publicURL) {
+            return rejectWithValue('업로드된 파일 URL을 가져올 수 없습니다.');
+        }
+
+        // userinfo 테이블에 profile_image 컬럼 업데이트
+        const { error: updateError } = await supabase
+            .from('userinfo')
+            .update({ profile_image: publicURL })
+            .eq('user_id', user.id);
+
+        if (updateError) {
+            console.error('프로필 이미지 업데이트 에러:', updateError);
+            return rejectWithValue('프로필 이미지 업데이트 에러');
+        }
+
+        return user;
+    } catch (error) {
+        console.error('에러 발생:', error);
+        return rejectWithValue('로그인 중 에러 발생');
     }
-    if (!data) {
-        return rejectWithValue('로그인 실패?');
-    }
-    // data === user
-    return data;
 });
 
 // 회원가입
@@ -38,6 +83,9 @@ export const signUp = createAsyncThunk('auth/signUp', async ({ email, password, 
         return rejectWithValue('auth 로그인 에러');
     }
 
+    // 여기에
+    // user info 테이블에 nickname 추가
+    // 블로그에서도 가져와서 객체에 추가하는 로직 추가
     return user;
 });
 
@@ -46,8 +94,26 @@ export const signIn = createAsyncThunk('auth/signIn', async ({ email, password }
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-        console.log('error => ', error);
-        return rejectWithValue('auth 로그인 에러');
+        console.log('error => ', error.message);
+        console.log(error.message);
+
+        if (error.message.includes('Invalid login credentials')) {
+            return rejectWithValue('아이디와 비번을 확인하세요!');
+        } else {
+            return rejectWithValue('로그인 에러');
+        }
+    }
+
+    const { data: profile, error: profileError } = await supabase
+        .from('userinfo')
+        .select('profile_image')
+        .eq('id', data.user.id)
+        .single();
+
+    data.user.profile = profile.profile_image;
+
+    if (profileError) {
+        console.log(profileError);
     }
 
     return data;
@@ -63,12 +129,131 @@ export const signOut = createAsyncThunk('auth/signOut', async (_, { rejectWithVa
     }
 });
 
-// 로그인 상태 체크
-export const checkSignIn = createAsyncThunk('auth/checkSignIn', async () => {
-    const session = await supabase.auth.getUser();
-    const isSignIn = !!session.data.user;
+// 로그인 상태 체크 및 기본 정보 가져오기
+export const checkSignIn = createAsyncThunk('auth/checkSignIn', async (_, { rejectWithValue }) => {
+    const { data, error } = await supabase.auth.getSession();
+    if (error) {
+        throw new Error('Failed to fetch user');
+    }
 
-    return { isSignIn, session: session.data.user };
+    if (!data.session) return rejectWithValue('세션데이터 없으므로 로그인체크 로직 종료');
+
+    const { data: profileData, error: profileError } = await supabase
+        .from('userinfo')
+        .select('profile_image, username')
+        .eq('id', data?.session?.user?.id)
+        .single();
+
+    if (profileError) {
+        console.log('error => ', error);
+        return rejectWithValue('가져오기 실패했다');
+    }
+
+    if (!profileData) {
+        return rejectWithValue('데이터 없다');
+    }
+
+    data.session.user.profile = profileData.profile_image;
+    data.session.user.nickName = profileData.username;
+
+    return {
+        user: data.session.user,
+        session: data.session
+    };
+});
+
+// 닉네임 추가 및 수정
+export const updateNickname = createAsyncThunk('auth/updateNickname', async (nickUpdate, { rejectWithValue }) => {
+    // 트랜잭션 시작
+    const { data: userInfoData, error: userInfoError } = await supabase
+        .from('userinfo')
+        .update({ username: nickUpdate.nickName })
+        .eq('email', nickUpdate.email)
+        .select()
+        .single();
+
+    if (userInfoError) {
+        console.log('error => ', userInfoError);
+        return rejectWithValue('닉네임 업데이트 실패했다');
+    }
+
+    if (!userInfoData) {
+        return rejectWithValue('사용자 정보가 없다');
+    }
+
+    // blogs 테이블 업데이트
+    const { data: blogsData, error: blogsError } = await supabase
+        .from('blogs')
+        .update({ nick_name: nickUpdate.nickName })
+        .eq('user_id', nickUpdate.email)
+        .select();
+
+    if (blogsError) {
+        console.log('error => ', blogsError);
+        return rejectWithValue('블로그 업데이트 실패했다');
+    }
+
+    if (!blogsData) {
+        return rejectWithValue('블로그 데이터가 없다');
+    }
+
+    return { userInfoData, blogsData };
+});
+
+// 프로필 사진 추가 및 수정
+export const updateProfile = createAsyncThunk('auth/updateProfile', async (picUpdate, { rejectWithValue }) => {
+    let imgData, imgError;
+
+    const fileName = `${Date.now()}_${picUpdate.file.name}`;
+    // 파일이 있는 경우에만 파일 업로드를 수행
+    if (picUpdate.file !== null) {
+        const uploadResult = await supabase.storage.from('blogs').upload(fileName, picUpdate.file);
+
+        imgData = uploadResult.data;
+        imgError = uploadResult.error;
+
+        if (imgError) {
+            console.log('error => ', imgError);
+            return rejectWithValue('이미지 쓰기 실패했다');
+        }
+    }
+
+    console.log(imgData);
+    // 업로드된 이미지의 URL 가져오기
+    const { data } = supabase.storage.from('blogs').getPublicUrl(fileName);
+
+    if (!data) {
+        return rejectWithValue('업로드된 파일 URL을 가져올 수 없습니다.');
+    }
+
+    // userinfo 테이블에 profile_image 컬럼 업데이트
+    const { error: updateError } = await supabase
+        .from('userinfo')
+        .update({ profile_image: data.publicUrl })
+        .eq('email', picUpdate.email);
+
+    if (updateError) {
+        console.error('프로필 이미지 업데이트 에러:', updateError);
+        return rejectWithValue('프로필 이미지 업데이트 에러');
+    }
+
+    return data.publicUrl;
+});
+
+// 유저정보 가져오기
+export const getUserInfo = createAsyncThunk('blogs/getUserInfo', async (_, { rejectWithValue }) => {
+    const { data, error } = await supabase.from('userinfo').select('*');
+
+    if (error) {
+        console.log('error => ', error);
+        return rejectWithValue('가져오기 실패했다');
+    }
+
+    if (!data) {
+        return rejectWithValue('데이터 없다');
+    }
+
+    return data;
 });
 
 const initialState = {
@@ -76,7 +261,8 @@ const initialState = {
     isLoggedIn: false,
     session: null,
     loading: false,
-    error: null
+    error: null,
+    userInfo: null
 };
 
 const authSlice = createSlice({
@@ -120,10 +306,10 @@ const authSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(signIn.fulfilled, (state, action) => {
+            .addCase(signIn.fulfilled, (state) => {
                 state.loading = false;
-                state.session = action.payload.session;
-                state.user = action.payload.user;
+                // state.session = action.payload.session;
+                // state.user = action.payload.user;
                 state.isLoggedIn = true;
             })
             .addCase(signIn.rejected, (state, action) => {
@@ -149,15 +335,61 @@ const authSlice = createSlice({
             .addCase(checkSignIn.pending, (state) => {
                 state.loading = true;
                 state.error = null;
+                state.isLoggedIn = false;
+                state.user = null;
+                state.session = null;
             })
             .addCase(checkSignIn.fulfilled, (state, action) => {
                 state.loading = false;
-                if (!action.payload.session) return;
+                state.error = null;
+                state.isLoggedIn = true;
+                state.user = action.payload.user;
                 state.session = action.payload.session;
-                state.user = action.payload.session;
-                state.isLoggedIn = action.payload.isSignIn;
             })
             .addCase(checkSignIn.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+                state.isLoggedIn = false;
+                state.user = null;
+                state.session = null;
+            })
+            // 프로필 사진 수정
+            .addCase(updateProfile.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateProfile.fulfilled, (state, action) => {
+                state.loading = false;
+                state.user.profile = action.payload;
+            })
+            .addCase(updateProfile.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            })
+            // 닉네임 수정
+            .addCase(updateNickname.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateNickname.fulfilled, (state, action) => {
+                state.loading = false;
+                console.log(action.payload.username);
+                state.user.nickName = action.payload.username;
+            })
+            .addCase(updateNickname.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message;
+            })
+            // 유저정보 전체 가져오기
+            .addCase(getUserInfo.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getUserInfo.fulfilled, (state, action) => {
+                state.loading = false;
+                state.userInfo = action.payload;
+            })
+            .addCase(getUserInfo.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message;
             });
