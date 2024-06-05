@@ -16,13 +16,12 @@ const Join = () => {
     //이메일 정규식
     const emailRegEx = /^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/gi;
 
-    const emailCheck = (userEmail) => {
-        return emailRegEx.test(userEmail); //형식에 맞을 경우, true 리턴
-    };
+    // const emailCheck = (email) => {
+    //     return emailRegEx.test(email); //형식에 맞을 경우, true 리턴
+    // };
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
-        emailCheck(e.target.value);
     };
 
     const handlePasswordChange = (event) => {
@@ -35,8 +34,8 @@ const Join = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        if (!email.trim() || emailCheck === false) {
-            alert('이메일을 입력해 주세요.');
+        if (!emailRegEx.test(email)) {
+            alert('이메일 형식에 따라 정확히 입력해 주세요.');
             return;
         }
 
