@@ -79,8 +79,12 @@ export const signUp = createAsyncThunk('auth/signUp', async ({ email, password, 
     });
 
     if (signUpError) {
-        console.log('error => ', signUpError);
-        return rejectWithValue('auth 로그인 에러');
+        // console.log('error => ', signUpError);
+        if (signUpError.message === 'User already registered') {
+            // 409 Conflict 상태 코드는 일반적으로 중복 오류를 나타냅니다.
+            return rejectWithValue('이미 사용 중인 이메일입니다');
+        }
+        return rejectWithValue(signUpError.message || '회원가입 중 오류가 발생했습니다');
     }
 
     return signUpData.user;

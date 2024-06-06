@@ -14,11 +14,6 @@ const Header = () => {
 
     useEffect(() => {
         if (user) {
-            // if (user?.app_metadata?.provider === 'email') {
-            //     setProfilePic(user.profile);
-            // } else {
-            //     setProfilePic(user.identities[0].identity_data.avatar_url);
-            // }
             setProfilePic(user.profile);
             setUserId(user.id);
         }
@@ -57,7 +52,7 @@ const Header = () => {
                     <StyledLogo onClick={onclickLogo} alt="메인페이지 로고 이미지">
                         <StyledImg src="/logo.webp" alt="sitelogo" />
                     </StyledLogo>
-                    <StyledSpan>{'A08 팔좀주물러조'}</StyledSpan>
+                    <StyledSpan onClick={onclickLogo}>{'A08 팔좀주물러조'}</StyledSpan>
                 </StyledHeaderBox1>
 
                 <StyledLoginArea>
@@ -99,6 +94,7 @@ const StyledHeaderBox1 = styled.div`
 const StyledSpan = styled.span`
     color: #220d3e;
     font-size: 1.5rem;
+    cursor: pointer;
 `;
 
 const StyledHeaderInner = styled.div`
@@ -145,3 +141,9 @@ const StyledProfilePic = styled.img`
 `;
 
 export default Header;
+
+// if (user?.app_metadata?.provider === 'email') {
+//     setProfilePic(user.profile);
+// } else {
+//     setProfilePic(user.identities[0].identity_data.avatar_url);
+// }

@@ -1,12 +1,14 @@
 import useAuth from '@/hooks/useAuth';
+import { getBlogs, updateLikes } from '@/redux/blogs.slice';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import useBlogs from '../../hooks/useBlogs';
 
 function LikeButton({ id }) {
-    const { blogError, addLikes } = useBlogs();
+    const dispatch = useDispatch();
     const { user } = useAuth();
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+    const [localError, setLocalError] = useState(null);
 
     const handleLikeClick = async () => {
         setIsButtonDisabled(true);
@@ -17,22 +19,26 @@ function LikeButton({ id }) {
                     userId: user.id
                 };
 
-                addLikes(ids);
+                await dispatch(updateLikes(ids)).unwrap();
+                await dispatch(getBlogs()).unwrap();
             } else {
                 alert('로그인이 필요합니다');
             }
         } catch (error) {
             console.error('Failed to update likes: ', error);
+            setLocalError(error.message);
         }
         setIsButtonDisabled(false);
     };
 
     useEffect(() => {
-        console.log(blogError);
-        if (blogError) {
-            if (blogError === '이미 좋아요를 눌렀습니다') alert('이미 좋아요를 눌렀습니다');
+        if (localError) {
+            if (localError === '이미 좋아요를 눌렀습니다' || localError === 'Rejected') {
+                alert('이미 좋아요를 눌렀습니다');
+                setLocalError(null);
+            }
         }
-    }, [blogError]);
+    }, [localError]);
 
     return (
         <StyledButton onClick={handleLikeClick} disabled={isButtonDisabled}>

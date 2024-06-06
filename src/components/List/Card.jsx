@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import LikeButton from '../Elements/LikeButton';
+import Likes from '../Elements/Likes';
 // const regex = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))/g;
 
 const removeImgTags = (htmlString) => {
@@ -46,7 +48,9 @@ const Card = ({ blog }) => {
                         <StyledWriter>{blog.nick_name}</StyledWriter>
                     </StyledProfile>
                     <StyledLikesContainer>
-                        <StyledLikes>❤️ {blog.likes}</StyledLikes>
+                        <LikeButton id={blog.id} /> &nbsp;
+                        <Likes id={blog.id} />
+                        {/* <StyledLikes>❤️ {blog.likes}</StyledLikes> */}
                     </StyledLikesContainer>
                 </StyledInfo>
             </StyledCardContainer>
@@ -167,8 +171,8 @@ const StyledLikesContainer = styled.div`
     align-items: center;
 `;
 
-const StyledLikes = styled.div`
-    margin-left: 10px;
-`;
+// const StyledLikes = styled.div`
+//     margin-left: 10px;
+// `;
 
 export default Card;
