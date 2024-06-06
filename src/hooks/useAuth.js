@@ -32,19 +32,16 @@ const useAuth = () => {
         dispatch(getUserInfo());
     }, [dispatch]);
 
-    const logIn = (logInData) => dispatch(signIn(logInData)).then(() => dispatch(checkSignIn()));
+    const logIn = (logInData) => dispatch(signIn(logInData));
     const logOut = () => dispatch(signOut());
     const joinUp = (logInData) => dispatch(signUp(logInData));
-    // .then(() => dispatch(checkSignIn()))
-    // .catch((error) => {
-    //     throw new Error(error);
-    // });
     const logInWithGithub = (prevLocation) => dispatch(signInWithGithub(prevLocation));
     // pickUpdate = { file, email }
     const upProfile = (picUpdate) => dispatch(updateProfile(picUpdate)).then(() => dispatch(checkSignIn()));
     // nickUpdate = { nickName, email }
     const upNickName = (nickUpdate) => dispatch(updateNickname(nickUpdate));
     const getUser = () => dispatch(getUserInfo());
+    const checkSignedIn = () => dispatch(checkSignIn());
 
     return {
         user,
@@ -59,7 +56,8 @@ const useAuth = () => {
         logInWithGithub,
         upProfile,
         upNickName,
-        getUser
+        getUser,
+        checkSignedIn
     };
 };
 

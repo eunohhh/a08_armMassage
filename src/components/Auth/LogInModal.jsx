@@ -10,7 +10,7 @@ import InputField from '../Elements/InputField';
 const LogInModal = () => {
     const [userId, setUserId] = useState('');
     const [password, setPassword] = useState('');
-    const { logInWithGithub, logIn } = useAuth();
+    const { logInWithGithub, logIn, checkSignedIn } = useAuth();
     const modal = useModal();
     const navigate = useNavigate();
     // const location = useLocation();
@@ -35,9 +35,9 @@ const LogInModal = () => {
 
         // 이부분 추가 : 잘못된 아이디로 로그인했을 경우
         try {
-            // await logIn(authObject).unwrap();
-            logIn(authObject);
-
+            await logIn(authObject).unwrap();
+            await checkSignedIn().unwrap();
+            alert('로그인 성공!');
             modal.close();
         } catch (error) {
             console.log(error);
