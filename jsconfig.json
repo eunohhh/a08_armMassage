@@ -5,5 +5,5 @@
             "@/*": ["*"]
         }
     },
-    "include": ["src", "backup/Editor copy.jsx"]
+    "include": ["src", "backup/Editor copy.jsx", "backup/MyPageTest.jsx"]
 }
