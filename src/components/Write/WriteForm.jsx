@@ -34,7 +34,7 @@ function WriteForm() {
 
         if (!title || !contents) return alert('내용이 입력되지 않았습니다!');
 
-        const yes = confirm('글을 수정하시겠습니까?');
+        const yes = confirm(blog ? '글을 수정하시겠습니까?' : '글을 출간하시겠습니까?');
 
         if (!yes) return;
 
