@@ -2,9 +2,9 @@
 
 <br><br>
 
-## :Cat: 목차
+## 🐈 목차
 
-|             [🐈 프로젝트 소개 🐈](#Cat-프로젝트-소개)             |
+|             [🐈 프로젝트 소개 🐈](#cat-프로젝트-소개)             |
 | :---------------------------------------------------------------: |
 |            [🏠 프로젝트 구조 🏠](#home-사용-기술-스택)            |
 |           [🍡 사용 기술 스택 🍡](#dango-사용-기술-스택)           |
@@ -17,7 +17,7 @@
 
 <br><br>
 
-# :Cat: 프로젝트 소개
+# 🐈 프로젝트 소개
 
 ### [🌕YouTube](https://www.youtube.com/watch?v=SmS-ahp5Ipo)
 
@@ -36,7 +36,7 @@
 
 <br><br>
 
-[🌙 목차로 돌아가기](#Cat-목차)
+[🌙 목차로 돌아가기](#cat-목차)
 
 <br><br>
 
@@ -44,7 +44,7 @@
 
 <br><br>
 
-## :home: 프로젝트 구조
+## 🏠 프로젝트 구조
 
 ```
 📦src
@@ -115,7 +115,7 @@
 
 <br><br>
 
-[🌙 목차로 돌아가기](#Cat-목차)
+[🌙 목차로 돌아가기](#cat-목차)
 
 <br><br>
 
@@ -123,7 +123,7 @@
 
 <br><br>
 
-# :dango: 사용 기술 스택
+# 🍡 사용 기술 스택
 
 ![vite](https://img.shields.io/badge/vite-5.2.12-646CFF?style=for-the-badge&logo=vite&logoColor=white)<br />
 ![supabase](https://img.shields.io/badge/@supabase/supabase--js-2.43.4-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white) <br />
@@ -135,7 +135,7 @@
 
 <br><br>
 
-[🌙 목차로 돌아가기](#Cat-목차)
+[🌙 목차로 돌아가기](#cat-목차)
 
 <br><br>
 
@@ -143,7 +143,7 @@
 
 <br><br>
 
-# :tea: 트러블 슈팅
+# 🍵 트러블 슈팅
 
 ### 트러블 슈팅
 
@@ -167,7 +167,7 @@
 
 <br><br>
 
-[🌙 목차로 돌아가기](#Cat-목차)
+[🌙 목차로 돌아가기](#cat-목차)
 
 <br><br>
 
@@ -175,7 +175,7 @@
 
 <br><br>
 
-## :carrot: 팀원별 WBS
+## 🥕 팀원별 WBS
 
 -   오 은 : Supabase 관련 로직 및 db 관리, redux-toolkit 관련 로직, customHooks 관련 로직, 디테일페이지 컴포넌트 제작
 -   유인수 : 메인페이지 컴포넌트 및 카드, 버튼, 인풋, 개인별 페이지 컴포넌트 제작, 전체적인 스타일링
@@ -185,6 +185,6 @@
 
 <br><br>
 
-[🌙 목차로 돌아가기](#Cat-목차)
+[🌙 목차로 돌아가기](#cat-목차)
 
 <br><br>
