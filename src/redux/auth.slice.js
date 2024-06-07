@@ -96,7 +96,6 @@ export const signIn = createAsyncThunk('auth/signIn', async ({ email, password }
 
     if (error) {
         console.log('error => ', error.message);
-        console.log(error.message);
 
         if (error.message.includes('Invalid login credentials')) {
             return rejectWithValue('아이디와 비번을 확인하세요!');
